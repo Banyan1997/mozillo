@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>title</title>
+	<link rel="stylesheet" type="text/css" href="../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	<style>
+		html,
+		body {
+			background-color: #fff;
+		}
+		.top {
+			height: 2.2rem;
+			background: #fff;
+		}
+
+		.top_left {
+			width: 2.2rem;
+			height: 2.2rem;
+			float: left;
+		}
+
+		.top_right {
+			width: 2.2rem;
+			height: 2.2rem;
+			float: right;
+		}
+
+		.top_center {
+			float: left;
+			left: 50%;
+			margin-left: -6.15rem;
+		}
+
+		.center_tab {
+			height: 2.2rem;
+			width: 1.8rem;
+			/*width: 3rem;*/
+			margin-right: 1.25rem;
+		}
+
+		.left_icon {
+			height: 1.5rem;
+			width: 1.5rem;
+			margin-left: 0.5rem;
+			margin-top: 0.35rem;
+			border-radius: 50%;
+		}
+
+		.right_icon {
+			height: 1.25rem;
+			width: 1.25rem;
+			margin-left: 0.45rem;
+			margin-top: 0.5rem;
+		}
+
+		.aui-tab-item.aui-active {
+			color: #ff9933;
+			border-bottom: 2px solid #ff9933;
+		}
+
+		#header {
+			height: 70px;
+			padding-top: 26px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="top" id="header">
+		<div class="top_left" id="updataAvatar">
+			<img src="../image/arrow_left_grey_small.png" class="left_icon"tapmode onclick="api.closeWin();">
+		</div>
+		<div class="aui-tab top_center" id="tab">
+			<div class="aui-tab-item aui-active center_tab" onclick="openus();">
+				<span onclick="openus();" >我们</span>
+			</div>
+			<div class="aui-tab-item center_tab">
+				<span onclick="openmozillo();">谋之</span>
+			</div>
+			<div class="aui-tab-item center_tab" onclick="openmore();">
+				<span onclick="openmore();">更多</span>
+			</div>
+		</div>
+		<div class="top_right">
+			<!-- <img src="../image/search_orange.png" alt="" class="right_icon" tapmode onclick="openSearch()"> -->
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../script/aui-tab.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../script/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script type="text/javascript" src="../script/closeApp.js"></script>
+<script type="text/javascript">
+	var header = $api.byId('header');
+	var headerH = $api.offset(header).h;
+	var local_userInfo = $api.getStorage('local_userInfo');
+
+	apiready = function() {
+		openus();
+	};
+
+	function openus() {
+		api.openFrame({
+			name: 'about_us',
+			url: './about_us.html',
+			rect: {
+				x: 0,
+				y: headerH,
+				w: 'auto',
+				h: 'auto'
+			},
+			pageParam: {
+				name: 'test'
+			},
+			overScrollMode: 'scrolls'
+		});
+		api.setFrameAttr({
+			name: 'about_more',
+			hidden: 'true'
+		});
+	};
+	function openmozillo() {
+		api.openFrame({
+			name: 'about_mozillo',
+			url: './about_mozillo.html',
+			rect: {
+				x: 0,
+				y: headerH,
+				w: 'auto',
+				h: 'auto'
+			},
+			pageParam: {
+				name: 'test'
+			},
+			overScrollMode: 'scrolls'
+		});
+		api.setFrameAttr({
+			name: 'about_us',
+			hidden: 'true'
+		});
+	}
+
+	function openmore() {
+		api.openFrame({
+			name: 'about_more',
+			url: './about_more.html',
+			rect: {
+				x: 0,
+				y: headerH,
+				w: 'auto',
+				h: 'auto'
+			},
+			pageParam: {
+				name: 'test'
+			},
+			overScrollMode: 'scrolls'
+		});
+		api.setFrameAttr({
+			name: 'about_us',
+			hidden: 'true'
+		});
+	}
+
+	var tab = new auiTab({
+		element: document.getElementById("tab"),
+		index: 1,
+		repeatClick: false
+	}, function(ret) {
+		console.log(ret);
+	});
+</script>
+
+</html>

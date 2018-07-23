@@ -1,0 +1,372 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>我的关注</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui-iconfont.ttf" />
+    <style>
+        body {
+            background: #fff;
+        }
+
+        .clearfix:after {
+            content: "";
+            display: block;
+            height: 0;
+            clear: both;
+        }
+
+        .clearfix {
+            zoom: 1;
+        }
+
+        .arrow_left_grey_small {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .aui-title {
+            font-size: 0.8rem;
+            color: #ff9933;
+        }
+
+        .aui-border-b {
+            height: 3.2rem;
+        }
+        /*.aui-border-b  #follow {
+          float: right;
+          width: 3rem;
+          height:1.2rem;
+          margin-top: -0.7rem;
+        }*/
+
+        .aui-border-b .like_pic {
+            float: right;
+            width: 3.2rem;
+            height: 1.3rem;
+            margin-top: -0.7rem;
+        }
+
+        .aui-card-list-user-name .like_name {
+            font-size: 0.8rem;
+        }
+        /*.aui-card-list-user-name  .like_pic{
+          width: 3rem;
+          height:1.2rem;
+          margin-top: 0.2rem;
+        }*/
+
+        .aui-img-round {
+            width: 1rem;
+            height: 2rem;
+        }
+
+        .fansempty {
+            margin-top: 5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #ff9933;
+            line-height: 100%;
+            height: 100%;
+        }
+
+        .abstract {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="like_list" id="like_list">
+
+        <!-- <div class="aui-card-list-header aui-card-list-user aui-border-b">
+            <div class="aui-card-list-user-avatar">
+                <img src="../image/follow_head_01.jpg" class="aui-img-round">
+            </div>
+            <div class="aui-card-list-user-name">
+                <div class="like_name">张津榕</div> -->
+        <!-- <small><img src="../image/a_like.png" alt="" class="like_pic"></small> -->
+        <!-- </div>
+            <img src="../image/a_like.png" alt="" class="like_pic">
+            <div class="aui-card-list-user-info">知名美食博主</div>
+        </div> -->
+
+
+    </div>
+    <div class="fansempty" id="fansempty"> </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+<script type="text/javascript" src="../script/doT.js"></script>
+<script type="text/javascript" src="../script/aui-scroll.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script id="concern_detail" type="text/x-dot-template">
+    {{~it:value:index}}
+
+    <div class="aui-card-list-header aui-card-list-user aui-border-b">
+        <div class="aui-card-list-user-avatar" tapmode onclick="openOtherPersonPage('{{= value.beconcernedId.id }}')">
+            <img src="{{= value.beconcernedId.avatar }}" class="aui-img-round" />
+        </div>
+        <div class="aui-card-list-user-name">
+            <div class="like_name" tapmode onclick="openOtherPersonPage('{{= value.beconcernedId.id }}')"> {{= value.beconcernedId.nickname }} </div>
+        </div>
+        <img src="../image/a_like.png" alt="" beconcernedId="{{= value.beconcernedId.id}}" class="like_pic">
+        <div class="aui-card-list-user-info abstract">{{= value.beconcernedId.abstract }}</div>
+    </div>
+
+    {{~}}
+</script>
+
+<script type="text/javascript">
+    var local_userId = $api.getStorage('local_userInfo').id;
+    var beconcernedId;
+    var loading;
+    apiready = function() {
+
+        concern(local_userId);
+        api.addEventListener({
+            name: 'close'
+        }, function(ret, err) {
+            deleteQuery();
+        });
+
+        api.addEventListener({
+            name: 'closePerson'
+        }, function(ret, err) {
+            window.location.reload();
+            api.closeWin({
+                name: 'lx_otherpersonal_page'
+            });
+
+        });
+
+        $('#like_list').on('click', '.like_pic', function() {
+            var beconcernedId = $(this).attr('beconcernedId');
+            var concernId = $(this).attr('concernId');
+            // alert("用户id"+local_userId);
+            // alert("粉丝id"+beconcernedId);
+            var Src = $(this).attr("src");
+            if (Src == "../image/a_like.png") {
+                Src = "../image/bb_like.png";
+                quxiaoConcern();
+
+            } else {
+                Src = "../image/a_like.png";
+                success();
+            }
+            $(this).attr("src", Src);
+            cancel(beconcernedId, local_userId);
+        });
+
+    };
+
+
+    function concern(id) {
+        var UILoading = api.require('UILoading');
+        UILoading.flower({
+            center: {
+                x: api.winWidth/2.0,
+                y: api.winHeight/2.0
+            },
+            size: 45,
+            fixed: true
+        }, function(ret) {
+            //alert(JSON.stringify(ret));
+            loading = ret.id;
+        });
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("concern");
+        Model.query({
+                filter: {
+                    "fields": {
+                        "beconcernedId": true,
+                        "concernId": true
+                    },
+                    "include": "beconcernedIdPointer",
+                    "where": {
+                        "concernId": id
+                    }
+                }
+            },
+            function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                } else {
+                    //处理数据 ret
+                    // alert(1);
+                    // alert(JSON.stringify(ret));
+
+                    if (ret[0] == null) {
+                        document.getElementById('fansempty').innerHTML = '暂时没有关注哦~';
+                        for(var i = 0; i <= loading; i++){
+                            UILoading.closeFlower({
+                                id: i
+                            });
+                        }
+                    }else {
+                        var concern_detail = doT.template($('#concern_detail').html());
+                        $('#like_list').html(concern_detail(ret));
+                        for(var i = 0; i <= loading; i++){
+                            UILoading.closeFlower({
+                                id: i
+                            });
+                        }
+                    }
+
+                }
+            })
+
+    }
+
+
+    ///根据关注人的id查出concern的id
+    function cancel(beconcernedId, concernId) {
+        // alert("粉丝id" + beconcernedId);
+        // alert("用户id" + concernId);
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("concern");
+        Model.query({
+                filter: {
+                    "fields": {
+                        "id": true,
+                        "exist": true,
+                        "beconcernedId": beconcernedId
+                    },
+                    "where": {
+                        "beconcernedId": beconcernedId,
+                        "concernId": concernId
+                    }
+                }
+            },
+            function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                    // alert("error")
+                } else {
+                    //处理数据 ret
+                    // alert(JSON.stringify(ret));
+                    beconcernedId = ret[0].beconcernedId;
+
+                    changeExist(ret[0].id, ret[0].exist, beconcernedId);
+                    // alert(beconcernedId);
+                    // deleteItem(ret[0].id);
+                }
+            })
+    }
+
+
+    //改变exist的值
+    function changeExist(id, exist, beconcernedId) {
+        if (exist == true) {
+            exist = false;
+        } else {
+            exist = true;
+        }
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("concern");
+        Model.save({
+            "_id": id
+        }, {
+            "exist": exist
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+            } else {
+                //处理数据 ret
+                ///alert(beconcernedId);
+
+                // alert(JSON.stringify(ret));
+                // alert(ret.exist);
+            }
+        })
+
+    }
+
+    //根据用户id和exist值查找要删除的关系
+    function deleteQuery() {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("concern");
+        Model.query({
+                filter: {
+                    "fields": {
+                        "id": true,
+                        "exist": true
+                    },
+                    "where": {
+                        "exist": false,
+                        "concernId": local_userId
+                    }
+                }
+            },
+            function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                    // alert("error")
+                } else {
+                    //处理数据 ret
+                    for (var i = 0; i < ret.length; i++) {
+                        // alert(local_userId);
+                        // alert("要删除的人" + ret[i].id);
+                        deleteItem(ret[i].id);
+                    }
+                    // alert(JSON.stringify(ret));
+                    api.sendEvent({
+                        name: 'closewin',
+                    });
+                }
+            })
+    }
+    //根据concern的id进行删除操作
+    function deleteItem(id) {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("concern");
+        Model.delete({
+            "_id": id
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+            } else {
+                //处理数据 ret
+                // alert("删除成功");
+                // window.location.reload();//刷新界面
+            }
+        })
+    }
+
+    function quxiaoConcern() {
+			api.toast({
+				msg: '亲，您已经取消了对他的关注哦~',
+				duration: 1000,
+				location: 'bottom'
+			})
+		}
+
+    function success() {
+			api.toast({
+				msg: '关注成功~',
+				duration: 1000,
+				location: 'middle'
+			})
+		}
+
+    function openOtherPersonPage(id) {
+        api.openWin({
+            name: 'lx_otherpersonal_page',
+            url: './lx_otherpersonal_page.html',
+            pageParam: {
+                id: id
+            }
+        });
+    }
+</script>
+
+</html>

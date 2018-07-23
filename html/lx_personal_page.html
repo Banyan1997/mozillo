@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <style>
+        .top {
+            background: #fff;
+            position: relative;
+            height: auto;
+        }
+
+        .pic_01 {
+            width: 100%;
+            height: 9rem;
+        }
+
+        .pic_02 {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 100%;
+            position: relative;
+            left: 8%;
+            /*top: -1.5rem;*/
+            margin-top: -1.5rem;
+        }
+
+        .pic_03 {
+            width: 1.25rem;
+            height: 1.25rem;
+            position: absolute;
+            top: 1.75rem;
+            left: 0.5rem;
+        }
+
+        .pic_04 {
+            width: 1rem;
+            height: 1rem;
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+        }
+
+        .blank {
+            width: 100%;
+            height: 0.6rem;
+            background: #f2f2f2;
+            clear: both;
+        }
+
+        .content {
+            background: #fff;
+            clear: both;
+        }
+
+        .content_top {
+            width: 100%;
+            height: 1.8rem;
+            background: #fff;
+            color: black;
+            padding: 0.5rem 0.75rem;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        .content_item_word {
+            width: 100%;
+            height: auto;
+            padding: 0.5rem 1rem;
+        }
+
+        .content_item_title {
+            padding-bottom: 0.5rem;
+            color: #ff9933;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            width: 4.5rem;
+            height: 1.2rem;
+            border: 1px solid #ff9933;
+            text-align: center;
+            border-radius: 0.6rem;
+        }
+
+        .edit {
+            color: #fff;
+            background: #ff9933;
+            position: relative;
+            left: 70%;
+            margin-top: -2rem;
+            font-size: 0.7rem;
+            line-height: 1.2rem;
+        }
+
+        .liaotian {
+            color: #ff9933;
+            position: relative;
+            left: 70%;
+            /*bottom: 4.7rem;*/
+            margin-top: -1.2rem;
+            background: #fff;
+        }
+
+        .block {
+            width: 100%;
+            height: 0.75rem;
+            background: #fff;
+        }
+
+        .person {
+            width: 100%;
+            height: 4.5rem;
+            padding-top: 0.25rem;
+            background: #fff;
+        }
+
+        .person_title {
+            color: #ff9933;
+            font-size: 1rem;
+            /*font-weight: bold;*/
+            float: left;
+            margin-left: 1.0rem;
+        }
+
+        .person_guanzhu {
+            /*float: right;*/
+            /*padding: 0.2rem 0.6rem;*/
+            padding-top: 25px;
+        }
+
+        .person_guanzhu_topic {
+            float: left;
+        }
+
+        .guanzhunum {
+            float: left;
+            margin-left: 0.2rem;
+        }
+
+        .person_fans {
+            /*float: right;*/
+            /*padding: 0.2rem 0.6rem;*/
+        }
+
+        .person_fans_topic {
+            float: left;
+        }
+
+        .fansnum {
+            float: left;
+            margin-left: 4px;
+        }
+
+        .jianjie {
+            clear: both;
+            background: #ffffff;
+            width: 100%;
+            padding: 0.2rem 0;
+        }
+
+        .abstract {
+            padding-left: 1.2rem;
+            padding-right: 1.2rem;
+            margin-top: 0.2rem;
+            color: #808080;
+            font-size: 0.7rem;
+        }
+
+        .title {
+            padding: 0 0.75rem;
+            font-size: 16px;
+            font-style: normal;
+            color: #ff9933;
+        }
+
+        .time {
+            padding: 0.5rem 0.75rem;
+        }
+
+        .time div {
+            display: inline-block;
+        }
+
+        .float_right {
+            float: right;
+        }
+
+        .pic {
+            height: 10rem;
+        }
+
+        #dynamicnum {
+            display: inline-block;
+        }
+
+        #dynamic {
+            background: #fff;
+        }
+
+        .messageempty {
+            padding-top: 5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #ff9933;
+            line-height: 100%;
+            height: 100%;
+            background-color: #ffffff;
+        }
+
+        .gander_icon {
+            width: 15px;
+            height: 15px;
+            float: left;
+            margin-left: 0.25rem;
+            margin-top: 7px;
+        }
+
+        .relation {
+            float: left;
+            font-size: 14px;
+            color: #000;
+        }
+
+        .relationBox {
+            height: 46px;
+            width: 120px;
+            float: right;
+            margin-top: -8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="top">
+        <img src="" alt="" class="pic_01" id="bg_pic" tapmode onclick="openPhotoBS(local_userInfo.background)">
+        <img src="../image/arrow_left_orange_small.png" alt="" class="pic_03" tapmode onclick="api.closeWin()">
+        <img src="" alt="" class="pic_02" id="avatar" tapmode onclick="openPhotoBS(local_userInfo.avatar)">
+        <div class="edit btn" tapmode onclick="openPersonalSet()">编辑资料</div>
+        <div class="block"></div>
+        <div class="person">
+            <div class="person_title" id="person_title"></div>
+            <div class="gander_icon">
+                <img src="" id="gander_icon">
+            </div>
+
+            <div class="relationBox">
+                <div class="relation">
+                    <div class="person_fans" id="person_fans">
+                        <div class="person_fans_topic" id="person_fans_topic" tapmode onclick="openfans();">粉丝:</div>
+                        <div class="fansnum" id="fansnum"></div>
+                    </div>
+                    <div class="person_guanzhu" id="person_guanzhu">
+                        <div class="person_guanzhu_topic" tapmode onclick="openLike()">关注:</div>
+                        <div class="guanzhunum" id="guanzhunum"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="jianjie" id="jianjie">
+                <div class="abstract" id="abstract"></div>
+            </div>
+        </div>
+    </div>
+    <div class="blank"></div>
+    <div class="content_top">我的动态</div>
+    <div id="dynamic">
+        <div class="messageempty" id="messageempty">
+            暂时没有动态哦~
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script type="text/javascript" src="../script/time.js"></script>
+<script type="text/javascript" src="../script/doT.js"></script>
+<script type="text/javascript" src="../script/aui-scroll.js"></script>
+<script id="dynamic_dot" type="text/x-dot-template">
+    {{~it:value:index}}
+    <div class="aui-card-list" tapmode onclick="detail('{{= value.id }}');">
+        <div class="aui-card-list-user-info time">
+            <div>提出了新点子</div>
+            <div class="float_right">{{=apicloudTimeFormat(value.createdAt,'yyyy-MM-dd hh:mm')}}</div>
+        </div>
+        <div class="title">{{= value.title}}</div>
+        <div class="aui-card-list-content-padded">
+            <div>
+                {{= value.content.substr(0, 80) + "......"}}
+            </div>
+            <img class="pic" src="{{= value.pictureArray[0] }}" />
+        </div>
+    </div>
+    <div class="blank"></div>
+    {{~}}
+</script>
+<script type="text/javascript">
+    // var local_bg = $api.getStorage('local_bg');
+    var local_userInfo = $api.getStorage('local_userInfo');
+    var loacl_userId = local_userInfo.id;
+    var photoBrowserStatus = false;
+    var loading;
+    var skipNum = 0;
+    var limitNum = 5;
+    var tag = true;
+
+    apiready = function() {
+
+        api.addEventListener({
+            name: 'personReload'
+        }, function(ret, err) {
+            api.closeWin({
+                name: 'zqx_personal_set_header'
+            });
+            window.location.reload();
+        });
+
+        api.addEventListener({
+            name: 'myUpdateAvatar'
+        }, function(ret, err) {
+            window.location.reload();
+        });
+
+        $("#bg_pic").attr("src", local_userInfo.background);
+        $("#person_title").html(local_userInfo.nickname);
+        $("#avatar").attr("src", local_userInfo.avatar);
+        if (local_userInfo.gender == "男") {
+            $("#gander_icon").attr("src", "../image/my_sex_2-01.png");
+            // alert("男");
+        } else if (local_userInfo.gender == "女") {
+            $("#gander_icon").attr("src", "../image/my_sex_1-01.png");
+            // alert("女");
+        }
+        // alert(local_userInfo.gender)
+        if (local_userInfo.abstract == null) $("#abstract").html("我很懒，什么都没写！");
+        else $("#abstract").html(local_userInfo.abstract);
+
+        openuserinfro();
+        query();
+        pullAdd();
+        // alert(JSON.stringify(local_userInfo));
+
+    };
+
+
+    //上拉加载
+    function pullAdd() {
+        var scroll = new auiScroll({
+            listen: true, //是否监听滚动高度，开启后将实时返回滚动高度
+            distance: 20 //判断到达底部的距离，isToBottom为true
+        }, function(ret) {
+            //		   console.log(JSON.stringify(ret))
+            if (ret.isToBottom == true && tag) {
+                tag = false;
+                pullAddQuery();
+            }
+        });
+    }
+
+
+    function openuserinfro() {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("user");
+        Model.get({
+            "_id": local_userInfo.id,
+
+        }, function(ret, err) { //根据id查询
+            if (err) {
+                //处理错误 err
+                // alert("出错！");
+            } else {
+                //处理数据 ret
+                //alert(JSON.stringify(ret));
+                var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+                var Model = client.Factory("concern");
+                Model.query({
+                    filter: {
+                        "where": {
+                            beconcernedId: local_userInfo.id
+                        },
+                        "include": "beconcernedIdPointer"
+                    }
+                }, function(rett, err) {
+                    if (err) {
+                        // alert(err);
+                    } else {
+                        //处理数据 ret
+                        $("#fansnum").html(rett.length);
+
+                    }
+                })
+                var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+                var Model = client.Factory("concern");
+                Model.query({
+                    filter: {
+                        "where": {
+                            concernId: local_userInfo.id
+                        },
+                        "include": "concernIdPointer"
+                    }
+                }, function(rettt, err) {
+                    if (err) {
+                        // alert(err);
+                    } else {
+                        //处理数据 ret
+                        //   if(rettt == null) var i = 0;
+                        $("#guanzhunum").html(rettt.length);
+
+                    }
+                })
+
+                //alert(ret.background)
+                // api.imageCache({
+                //     url: ret.background,
+                //     thumbnail:false
+                // }, function(ret, err) {
+                //     var url = ret.url;
+                //     $api.setStorage('local_bg' , url)
+                // });
+                $("#bg_pic").attr("src", ret.background);
+                $api.setStorage('local_bg', ret.background);
+                $("#person_title").html(ret.nickname);
+                //$("#guanzhunum").html(ret.concern);
+                //$("#fansnum").html(ret.fans);
+                $("#avatar").attr("src", ret.avatar);
+                if (ret.abstract == null) $("#abstract").html("我很懒，什么都没写！");
+                else $("#abstract").html(ret.abstract);
+            }
+        })
+    }
+
+    function query() {
+        var UILoading = api.require('UILoading');
+        UILoading.flower({
+            center: {
+                x: api.winWidth / 2.0,
+                y: api.winHeight / 2.0
+            },
+            size: 45,
+            fixed: true
+        }, function(ret) {
+            // alert(JSON.stringify(ret));
+            loading = ret.id;
+        });
+        // alert(loading);
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("article");
+        Model.query({
+            filter: {
+                "fields": {
+                    "id": true,
+                    "title": true,
+                    "content": true,
+                    "pictureArray": true,
+                    "authorId": true,
+                    "createdAt": true,
+                    "praiseNum": true
+                },
+                "include": "authorIdPointer",
+                "order": "createdAt DESC",
+                "limit": limitNum,
+                // "skip": skipNum,
+                "where": {
+                    "authorId": local_userInfo.id
+                }
+            }
+        }, function(ret, err) {
+
+
+            if (err) {
+                //处理错误 err
+            } else {
+                //处理数据 ret
+                // alert(JSON.stringify(ret));
+                //alert(JSON.stringify(ret));
+                // alert(JSON.stringify(ret[0].authorId.nickname ) );
+                if (ret[0] == null) {
+                    // alert(JSON.stringify());
+                    // document.getElementById('messageempty').innerHTML = '暂时没有动态哦~';
+                    for (var i = 0; i <= loading; i++) {
+                        UILoading.closeFlower({
+                            id: i
+                        });
+                    }
+                    loading = 0;
+                    // $("#messageempty").remove();
+
+                } else {
+                    $("#messageempty").remove();
+                    var dynamic_dot = doT.template($('#dynamic_dot').html());
+                    $('#dynamic').html(dynamic_dot(ret));
+                    $('#dynamicnum').html(ret.length);
+                    // alert(loading);
+                    for (var i = 0; i <= loading; i++) {
+                        UILoading.closeFlower({
+                            id: i
+                        });
+                    }
+                    loading = 0;
+                    limitNum = limitNum + limitNum;
+                    tag = true;
+
+
+                }
+            }
+        })
+    }
+
+    function pullAddQuery() {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("article");
+        Model.query({
+            filter: {
+                "fields": {
+                    "id": true,
+                    "title": true,
+                    "content": true,
+                    "pictureArray": true,
+                    "authorId": true,
+                    "createdAt": true,
+                    "praiseNum": true
+                },
+                "include": "authorIdPointer",
+                "order": "createdAt DESC",
+                "limit": limitNum,
+                // "skip": skipNum,
+                "where": {
+                    "authorId": local_userInfo.id
+                }
+            }
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+            } else {
+                // alert(JSON.stringify(ret));
+                if (ret[0] == null) {
+                    return false;
+                } else {
+                    var dynamic_dot = doT.template($('#dynamic_dot').html());
+                    $('#dynamic').html(dynamic_dot(ret));
+                    limitNum = limitNum + limitNum;
+                    tag = true;
+                }
+
+            }
+        })
+    }
+
+    function openPersonalSet() {
+        api.openWin({
+            name: 'zqx_personal_set_header',
+            url: './zqx_personal_set_header.html',
+            pageParam: {
+                name: 'test'
+            }
+        });
+    }
+
+    function openLike() {
+        api.openWin({
+            name: 'my_like',
+            url: './my_like.html',
+            pageParam: {
+                name: 'test'
+            }
+        });
+    }
+
+    function openPhotoBS(path) {
+        var photoBrowser = api.require('photoBrowser');
+        photoBrowser.open({
+            images: [
+                path
+            ],
+            // placeholderImg: 'widget://res/img/apicloud.png',
+            bgColor: '#000'
+        }, function(ret, err) {
+            if (ret) {
+                photoBrowserStatus = true;
+                if (ret.eventType == "click") {
+                    photoBrowser.close();
+                    photoBrowserStatus = false;
+                    api.removeEventListener({
+                        name: 'keyback'
+                    });
+                }
+                if (photoBrowserStatus) {
+                    api.addEventListener({
+                        name: 'keyback'
+                    }, function(ret, err) {
+                        photoBrowser.close();
+                        photoBrowserStatus = false;
+                        api.removeEventListener({
+                            name: 'keyback'
+                        });
+                    });
+                }
+
+            } else {
+                // alert(JSON.stringify(err));
+            }
+        });
+    }
+
+    function detail(id) {
+        api.openWin({
+            name: 'home_detail_personnal_header',
+            url: './home_detail_personnal_header.html',
+            pageParam: {
+                'id': id
+            }
+        });
+    };
+
+
+    function openfans() {
+        api.openWin({
+            name: 'my_fans',
+            url: './my_fans.html',
+            pageParam: {
+                name: 'test'
+            }
+        });
+    }
+</script>
+
+</html>

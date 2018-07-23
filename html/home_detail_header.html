@@ -1,0 +1,532 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css">
+    <style>
+        .header {
+            background-color: #ffffff;
+            /*box-shadow: 1px 1px 5px #aeaeae;*/
+        }
+
+        header a img {
+            height: 1.25rem;
+            width: 1.25rem;
+        }
+
+        .win_footer {
+            background-color: #ffffff;
+        }
+
+        .win_footer img {
+            width: 1rem!important;
+            height: 1rem!important;
+            margin: 0 auto;
+        }
+
+        .win_footer #collect {
+            width: 0.9rem;
+            height: 0.9rem;
+            margin: 0 auto;
+            padding-bottom: 2px;
+        }
+
+        .aui-tab-infro {
+            margin-top: 0.2rem;
+        }
+
+        #title {
+            left: 50%;
+            margin-left: -120px;
+            width: 240px;
+            color: #ff9933;
+            max-width: 70%;
+            display: none;
+        }
+
+        #header {
+            height: 70px;
+            padding-top: 25px;
+        }
+    </style>
+
+    <body>
+        <header class="aui-bar aui-bar-nav header" id="header">
+            <a class="aui-pull-left aui-btn">
+                <img src="../image/arrow_left_grey_small.png" tapmode onclick="Fnclose();">
+            </a>
+            <div class="aui-title" id="title"></div>
+            <<!-- a class="aui-pull-right aui-btn aui-btn-outlined">
+                <img src="../image/share_grey.png" alt="" tapmode onclick="share();">
+            </a> -->
+        </header>
+        <!-- <footer class="aui-bar aui-bar-tab" id="footer">
+        <div class="aui-bar-tab-item" tapmode>
+            <i class="aui-iconfont aui-icon-laud"></i>
+            <div class="aui-bar-tab-label">888</div>
+        </div>
+        <div class="aui-bar-tab-item" tapmode>
+            <i class="aui-iconfont aui-icon-star"></i>
+            <div class="aui-bar-tab-label">收藏</div>
+        </div>
+        <div class="aui-bar-tab-item" tapmode>
+            <i class="aui-iconfont aui-icon-comment"></i>
+            <div class="aui-bar-tab-label">666</div>
+        </div>
+    </footer> -->
+        <footer class="aui-bar aui-bar-tab win_footer" id="footer">
+            <div class="aui-bar-tab-item" tapmode onclick="changePraise()">
+                <img class="aui-iconfont" id="praise" src="../image/praise_grey.png">
+                <div class="aui-bar-tab-label aui-tab-infro" id="praise_num"></div>
+            </div>
+            <div class="aui-bar-tab-item" tapmode onclick="changeCollect()">
+                <img class="aui-iconfont" id="collect" src="../image/collect_grey.png">
+                <div class="aui-bar-tab-label aui-tab-infro" id="collection_num"></div>
+            </div>
+            <div class="aui-bar-tab-item" id="comment_num">
+
+            </div>
+        </footer>
+    </body>
+    <script type="text/javascript" src="../script/api.js"></script>
+    <script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+    <script type="text/javascript" src="../script/doT.js"></script>
+    <script type="text/javascript" src="../script/constant.js"></script>
+    <script id="praise_dot" type="text/x-dot-template">
+        {{~it:value:index}} {{= value.praiseNum }} {{~}}
+    </script>
+    <script id="collection_dot" type="text/x-dot-template">
+        {{~it:value:index}} {{= value.collectionNum }} {{~}}
+    </script>
+    <script id="comment_dot" type="text/x-dot-template">
+        {{~it:value:index}}
+        <div class="aui-bar-tab-item">
+            <img class="aui-iconfont" src="../image/ask_grey.png" tapmode onclick="comment( '{{= value.id }}','{{= value.authorId}}','{{= value.commentNum }}')">
+            <div class="aui-bar-tab-label aui-tab-infro"> {{= value.commentNum }}</div>
+        </div>
+        {{~}}
+    </script>
+    <script type="text/javascript">
+        var articleId;
+        var authorId;
+        var local_userId = $api.getStorage('local_userInfo').id;
+        var commentNum;
+        var pra = $api.byId('praise');
+        apiready = function() {
+            articleId = api.pageParam.id;
+            authorId = api.pageParam.authorId;
+            // alert(authorId);
+            queryPraise();
+            // api.addEventListener({
+            //     name: 'keyback'
+            // }, function(ret, err) {
+            //     api.closeWin();
+            // });
+
+            query(articleId);
+            initStatus(articleId, local_userId);
+
+            var header = $api.byId('header');
+            var headerH = $api.offset(header).h;
+            // $api.fixStatusBar(headerH);
+            var footer = $api.byId('footer');
+            var footerT = $api.offset(footer).t;
+            var height = footerT - headerH;
+            api.openFrame({
+                name: 'home_detail',
+                url: './home_detail.html',
+                rect: {
+                    x: 0,
+                    y: headerH,
+                    w: 'auto',
+                    h: height
+                },
+                pageParam: {
+                    id: articleId
+                },
+                bounces: false,
+                bgColor: 'rgba(0,0,0,0)',
+                vScrollBarEnabled: true,
+                hScrollBarEnabled: true
+            });
+            api.addEventListener({
+                name: 'shuaxincomment'
+            }, function(ret, err) {
+                window.location.reload();
+                api.closeWin({
+                    name: 'home_comment_header'
+                });
+
+            });
+
+            api.addEventListener({
+                name: 'keyback'
+            }, function(ret, err) {
+                api.sendEvent({
+                    name: 'keybackFun1',
+                });
+            });
+
+            api.addEventListener({
+                name: 'titleBlock1'
+            }, function(ret, err) {
+                titleBlock();
+            });
+
+            api.addEventListener({
+                name: 'titleNone1'
+            }, function(ret, err) {
+                titleNone();
+            });
+
+
+        };
+
+        //查询是否点赞
+        function queryPraise() {
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("praise");
+            Model.query({
+                    filter: {
+                        "where": {
+                            "articleId": articleId,
+                            "userId": local_userId
+                        }
+                    }
+                },
+                function(ret, err) {
+                    if (err) {
+                        //处理错误 err
+                        alert("error");
+                    } else {
+                        //处理数据 ret
+                        // alert(JSON.stringify(ret));
+                        var pra = $api.byId('praise');
+
+                        if (ret != "") {
+                            pra.setAttribute('src', '../image/praise_orange.png');
+                        }
+
+                    }
+                })
+        }
+
+        function query(id) {
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("article");
+            Model.query({
+                filter: {
+                    "fields": {
+                        "id": true,
+                        "title":true,
+                        "praiseNum": true,
+                        "collectionNum": true,
+                        "commentNum": true,
+                        "authorId": true
+                    },
+                    "where": {
+                        "_id": id
+                    }
+                }
+            }, function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                } else {
+                    //处理数据 ret
+                    // commentNum = ret.commentNum;
+                    // alert(commentNum)
+                    var praise_dot = doT.template($('#praise_dot').html());
+                    var collection_dot = doT.template($('#collection_dot').html());
+                    var comment_dot = doT.template($('#comment_dot').html());
+                    $('#praise_num').html(praise_dot(ret));
+                    $('#collection_num').html(collection_dot(ret));
+                    $('#comment_num').html(comment_dot(ret));
+                    $('#title').html(ret[0].title)
+                }
+            })
+        }
+
+        function initStatus(articleId, userId) {
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("articleCollection");
+            Model.query({
+                filter: {
+                    "where": {
+                        "articleId": articleId,
+                        "userId": userId
+                    }
+                }
+            }, function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                } else {
+                    //处理数据 ret
+                    if (ret != '') {
+                        var collect = $api.byId('collect');
+                        collect.setAttribute('src', '../image/collect_orange.png')
+                    }
+                }
+            })
+        }
+
+
+        //点击改变点赞按钮
+        function changePraise() {
+            var praise_num = $api.byId('praise_num');
+            var num = praise_num.innerText;
+            if (num < 0) {
+                num = 0;
+            }
+            var now = pra.getAttribute('src');
+            if (now == "../image/praise_grey.png") {
+                var new_num = Number(num) + 1;
+                praise_num.innerText = new_num;
+                savePraise(articleId, new_num);
+                savePraise2(local_userId, articleId);
+                pra.setAttribute('src', '../image/praise_orange.png');
+            } else {
+                var new_num = Number(num) - 1;
+                praise_num.innerText = new_num;
+                savePraise(articleId, new_num);
+                queryPraise2(local_userId, articleId);
+                pra.setAttribute('src', '../image/praise_grey.png');
+            }
+        }
+
+        //保存praise表数据
+        function savePraise2(userId, articleId) {
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("praise");
+            Model.save({
+                "articleId": articleId,
+                "userId": userId
+            }, function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                } else {
+                    //处理数据 ret
+                    // alert("点赞成功");
+
+                }
+            })
+        }
+
+        //取消点赞删除数据库操作
+        function queryPraise2(userId, articleId) {
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("praise");
+            Model.query({
+
+                    filter: {
+                        "where": {
+                            "articleId": articleId,
+                            "userId": userId
+                        }
+                    }
+                },
+                function(ret, err) {
+                    if (err) {
+                        //处理错误 err
+                        alert("error");
+                    } else {
+                        //处理数据 ret
+                        // alert(JSON.stringify(ret));
+                        deletePraise(ret[0].id);
+                    }
+                })
+        }
+
+
+        function deletePraise(id) {
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("praise");
+            Model.delete({
+                "_id": id
+            }, function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                } else {
+                    //处理数据 ret
+                    // alert("删除成功");
+                }
+            })
+        }
+
+        function changeCollect() {
+            var collect = $api.byId('collect');
+            var collection_num = $api.byId('collection_num');
+            var num = collection_num.innerText;
+
+            var now = collect.getAttribute('src');
+            if (now == "../image/collect_grey.png") {
+                collect.setAttribute('src', '../image/collect_orange.png')
+                var new_num = Number(num) + 1;
+                collection_num.innerText = new_num;
+                saveCollection(local_userId, articleId, new_num);
+            } else {
+                collect.setAttribute('src', '../image/collect_grey.png')
+                var new_num = Number(num) - 1;
+                collection_num.innerText = new_num;
+                deleteCollection(local_userId, articleId, new_num);
+            }
+        }
+
+        function savePraise(id, newPraiseNum) {
+            if (newPraiseNum < 0) {
+                newPraiseNum = 0;
+            }
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("article");
+            Model.save({
+                    "_id": id
+                }, {
+                    "praiseNum": newPraiseNum
+                },
+                function(ret, err) {
+                    if (err) {
+                        //处理错误 err
+                    } else {
+                        //处理数据 ret
+                    }
+                })
+        }
+
+        function saveCollection(userId, articleId, newCollectionNum) {
+            var client1 = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model1 = client1.Factory("article");
+            Model1.save({
+                    "_id": articleId
+                }, {
+                    "collectionNum": newCollectionNum
+                },
+                function(ret, err) {
+                    if (err) {
+                        //处理错误 err
+                    } else {
+                        //处理数据 ret
+                    }
+                })
+
+            var client2 = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model2 = client2.Factory("articleCollection");
+            Model2.save({
+                "userId": userId,
+                "articleId": articleId,
+                "authorId": authorId
+            }, function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                } else {
+                    //处理数据 ret
+                }
+            })
+        }
+
+        function deleteCollection(userId, articleId, newCollectionNum) {
+            var client2 = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model2 = client2.Factory("articleCollection");
+            Model2.query({
+                "filter": {
+                    "fields": {
+                        "id": true
+                    },
+                    "where": {
+                        "userId": userId,
+                        "articleId": articleId
+                    }
+                }
+            }, function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                    alert("查询错误");
+                } else {
+                    //处理数据 ret
+                    fnDelete(ret[0].id);
+                    saveCollectionNum(articleId, newCollectionNum);
+                }
+            })
+        }
+
+        function fnDelete(id) {
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("articleCollection");
+            Model.delete({
+                "_id": id
+            }, function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                    alert("删除失败");
+                    alert(JSON.stringify(err));
+                } else {
+                    //处理数据 ret
+                }
+            })
+        }
+
+        function saveCollectionNum(articleId, newCollectionNum) {
+            var client1 = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model1 = client1.Factory("article");
+            Model1.save({
+                "_id": articleId
+            }, {
+                "collectionNum": newCollectionNum
+            },
+            function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                } else {
+                    //处理数据 ret
+                }
+            })
+        }
+
+        function Fnclose() {
+            api.closeWin();
+        }
+
+        function share() {
+            api.openFrame({
+                name: 'share',
+                url: './share_frame.html',
+                rect: {
+                    x: 0,
+                    y: 0,
+                    w: 'auto',
+                    h: 'auto'
+                },
+                pageParam: {
+                    name: 'test'
+                }
+            });
+        }
+
+        function comment(id, authorId, commentNum) {
+            //alert(authorId)
+            api.openWin({
+                name: 'home_comment_header',
+                url: './home_comment_header.html',
+                pageParam: {
+                    'id': id,
+                    'authorId': authorId,
+                    'commentNum': commentNum
+
+                }
+            });
+        }
+
+        function titleBlock() {
+            $('#title').css("display", "block");
+        }
+
+        function titleNone() {
+            $('#title').css("display", "none");
+        }
+    </script>
+
+</html>

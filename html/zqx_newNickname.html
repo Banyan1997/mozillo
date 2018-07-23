@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <style>
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            background-color: #fafafa;
+        }
+        /*.wrap {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            bottom: 0;
+            background-color: #fafafa;
+        }*/
+
+        .wrap .text {
+            height: 2.9rem;
+            width: 100%;
+            font-size: 0.8rem;
+            border: none;
+            background: #ffffff;
+            margin-top: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        p {
+            margin-top: 0.75rem;
+            padding-left: 0.5rem;
+            color: #707070;
+            font-size: 0.7rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div id="nickName">
+
+        </div>
+        <p>好的昵称可以让朋友更容易记住你</p>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/swiper.js"></script>
+<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+<script type="text/javascript" src="../script/doT.js"></script>
+<script type="text/javascript" src="../script/aui-scroll.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script id="nicknameUpdate" type="text/x-dot-template">
+    {{~it:value:index}}
+    <input type="text" name="" class="text" value="{{= value.nickname}}" id="nickname"> {{~}}
+</script>
+<script type="text/javascript">
+    var local_userId = $api.getStorage('local_userInfo').id;
+    apiready = function() {
+        api.addEventListener({
+            name: 'mySave'
+        }, function(ret, err) {
+            // alert('已连接网络');
+            mySave();
+        });
+
+        query();
+    };
+
+    function query() {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("user");
+        Model.query({
+            filter: {
+                "fields": {
+                    "id": true,
+                    "nickname": true
+                },
+                // "include":"authorIdPointer"
+                "where": {
+                    "_id": local_userId
+                }
+            }
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+            } else {
+                //处理数据 ret
+                // alert(JSON.stringify(ret));
+                // alert(JSON.stringify(ret[0].authorId.nickname ) );
+                var nicknameUpdate = doT.template($('#nicknameUpdate').html());
+                $('#nickName').html(nicknameUpdate(ret));
+                // alert(article_list( ret ))
+            }
+        })
+    }
+
+    function mySave() {
+        var nickname = $("#nickname").val();
+        if (nickname == '') {
+            // alert("昵称标题不能为空！");
+            api.toast({
+                msg: '亲，昵称在不可以为空哦~',
+                duration: 1000,
+                location: 'middle'
+            });
+            $("#nickname").focus(); //在pc端是好使
+            return false;
+        } else if (nickname.length > 8) {
+            // alert("昵称8个字以内");
+            api.toast({
+                msg: '亲，昵称在8个字以内哦~',
+                duration: 1000,
+                location: 'middle'
+            });
+            return false;
+        }
+
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("user");
+        Model.save({
+            "_id": local_userId
+        }, {
+            "nickname": nickname
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+                // alert(err);
+                // alert('失败');
+            } else {
+                //处理数据 ret
+                // alert(JSON.stringify(ret));
+                $api.setStorage('local_userInfo', ret);
+            }
+        })
+        api.closeWin({
+            name: 'zqx_newNickname_header'
+        });
+    }
+</script>
+
+</html>

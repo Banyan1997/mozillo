@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>title</title>
+	<link rel="stylesheet" type="text/css" href="../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	<style>
+		html,
+		body {
+			background-color: #fff;
+		}
+		.top {
+			height: 2.2rem;
+			background: #fff;
+		}
+
+		.top_left {
+			width: 2.2rem;
+			height: 2.2rem;
+			float: left;
+		}
+
+		.top_right {
+			width: 2.2rem;
+			height: 2.2rem;
+			float: right;
+		}
+
+		.top_center {
+			float: left;
+			left: 50%;
+			margin-left: -6.15rem;
+		}
+
+		.center_tab {
+			height: 2.2rem;
+			width: 1.8rem;
+			/*width: 3rem;*/
+			margin-right: 1.25rem;
+		}
+
+		.left_icon {
+			height: 1.5rem;
+			width: 1.5rem;
+			margin-left: 0.5rem;
+			margin-top: 0.35rem;
+			border-radius: 50%;
+		}
+
+		.right_icon {
+			height: 1.25rem;
+			width: 1.25rem;
+			margin-left: 0.45rem;
+			margin-top: 0.5rem;
+		}
+
+		.aui-tab-item.aui-active {
+			color: #ff9933;
+			border-bottom: 2px solid #ff9933;
+		}
+
+		#header {
+			height: 70px;
+			padding-top: 26px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="top" id="header">
+		<div class="top_left" id="updataAvatar">
+			<img src="../image/my_orange.png" alt="" class="left_icon" id="avatar" tapmode onclick="openMy()">
+		</div>
+		<div class="aui-tab top_center" id="tab">
+			<div class="aui-tab-item aui-active center_tab" onclick="openhot();">
+				<span onclick="openhot();" >热门</span>
+			</div>
+			<div class="aui-tab-item center_tab"  onclick="openfollow();">
+				<span onclick="openfollow();">关注</span>
+			</div>
+			<div class="aui-tab-item center_tab" onclick="openontime();">
+				<span onclick="openontime();">话题</span>
+			</div>
+		</div>
+		<div class="top_right">
+			<img src="../image/search_orange.png" alt="" class="right_icon" tapmode onclick="openSearch()">
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../script/aui-tab.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../script/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script type="text/javascript" src="../script/closeApp.js"></script>
+<script type="text/javascript" src="../script/doT.js"></script>
+<!-- <script id="updataAvatar" type="text/x-dot-template">
+    {{~it:value:index}}
+				<img src="{{= value.picture}}" alt="" class="left_icon" id="avatar" tapmode onclick="openMy()">
+    {{~}}
+</script> -->
+<script type="text/javascript">
+	var header = $api.byId('header');
+	var headerH = $api.offset(header).h;
+	var local_userInfo = $api.getStorage('local_userInfo');
+	// var winW=  0;
+	// var winH=  0;
+	// var button;
+	apiready = function() {
+		openhot();
+		// winW=  api.winWidth;
+		// winH=  api.winHeight;
+		// button = api.require('UIButton');
+		//  openButton();
+		api.addEventListener({
+			name: 'myUpdateAvatar'
+		}, function(ret, err) {
+			// alert(JSON.stringify(ret.value));
+			//alert('sadasd');
+			window.location.reload();
+		});
+		if (local_userInfo.avatar) $("#avatar").attr("src", local_userInfo.avatar);
+		getavatar();
+		exitApp();
+	};
+
+	// function query() {
+	// 		var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+	// 		var Model = client.Factory("user");
+	// 		Model.query({
+	// 				filter: {
+	// 						"fields": {
+	// 								"id": true,
+	// 								"avatar": true
+	// 						},
+	// 						// "include":"authorIdPointer"
+	// 						"where": {
+	// 								"_id": local_userId
+	// 						}
+	// 				}
+	// 		}, function(ret, err) {
+	// 				if (err) {
+	// 						//处理错误 err
+	// 				} else {
+	// 						//处理数据 ret
+	// 						// alert(JSON.stringify(ret));
+	// 						// alert(JSON.stringify(ret[0].authorId.nickname ) );
+	// 						var updataAvatar = doT.template($('#updataAvatar').html());
+	// 						$('#avatar').html(updataAvatar(ret));
+	// 						// alert(article_list( ret ))
+	// 				}
+	// 		})
+	// }
+
+
+	function getavatar() {
+		var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+		var Model = client.Factory("user");
+		Model.get({
+			"_id": local_userInfo.id
+		}, function(ret, err) { //根据id查询
+			if (err) {
+				//处理错误 err
+				// alert("出错！");
+			} else {
+				//处理数据 ret
+				//alert(JSON.stringify(ret));
+				$("#avatar").attr("src", ret.avatar);
+
+			}
+		})
+	}
+
+	function openSearch() {
+		api.openWin({
+			name: 'lx_search',
+			url: './lx_search.html',
+			pageParam: {
+				name: 'test'
+			}
+		});
+	}
+
+	function openhot() {
+		api.openFrame({
+			name: 'home_hot',
+			url: './home_hot.html',
+			rect: {
+				x: 0,
+				y: headerH,
+				w: 'auto',
+				h: 'auto'
+			},
+			pageParam: {
+				name: 'test'
+			},
+			overScrollMode: 'scrolls'
+		});
+		api.setFrameAttr({
+			name: 'home_follow',
+			hidden: 'true'
+		});
+		api.setFrameAttr({
+			name: 'home_topic',
+			hidden: 'true'
+		});
+	};
+// function openButton(){
+	// button.open({
+	// 		rect: {
+	// 				x: winW-100,
+	// 				y: winH-120,
+	// 				w: 80,
+	// 				h: 80
+	// 		},
+	// 		corner: 5,
+	// 		bg: {
+	// 				normal: 'widget://image/add_orange.png',
+	// 				highlight: 'widget://image/add_orange.png',
+	// 				active: 'widget://image/add_orange.png'
+	// 		},
+	// 		title: {
+	// 				size: 14,
+	// 				highlight: '',
+	// 				active: '',
+	// 				normal: '',
+	// 				highlightColor: '#000000',
+	// 				activeColor: '#000adf',
+	// 				normalColor: '#ff0000',
+	// 				alignment: 'center'
+	// 		},
+	// 		fixedOn: api.frameName,
+	// 		fixed: true,
+	// 		move: true
+	// }, function(ret, err) {
+	// 	if (ret) {
+	// 		alert(JSON.stringify(ret));
+	// } else {
+	// 		alert(JSON.stringify(err));
+	// }
+	// });
+// };
+
+
+						 //
+						//  api.openWin({
+						// 		 name: 'zqx_edit_header',
+						// 		 url: './zqx_edit_header.html',
+						// 		 pageParam: {
+						// 				 name: 'test'
+						// 		 }
+						//  });
+
+
+
+
+
+
+
+	function openfollow() {
+
+		api.openFrame({
+			name: 'home_follow',
+			url: './home_follow.html',
+			rect: {
+				x: 0,
+				y: headerH,
+				w: 'auto',
+				h: 'auto'
+			},
+			pageParam: {
+				name: 'test'
+			},
+			overScrollMode: 'scrolls'
+		});
+		api.setFrameAttr({
+			name: 'home_hot',
+			hidden: 'true'
+		});
+		api.setFrameAttr({
+			name: 'home_topic',
+			hidden: 'true'
+		});
+	}
+
+	function openontime() {
+		api.openFrame({
+			name: 'home_topic',
+			url: './home_topic.html',
+			rect: {
+				x: 0,
+				y: headerH,
+				w: 'auto',
+				h: 'auto'
+			},
+			pageParam: {
+				name: 'test'
+			},
+			overScrollMode: 'scrolls'
+		});
+		api.setFrameAttr({
+			name: 'home_hot',
+			hidden: 'true'
+		});
+		api.setFrameAttr({
+			name: 'home_follow',
+			hidden: 'true'
+		});
+	}
+
+	var tab = new auiTab({
+		element: document.getElementById("tab"),
+		index: 1,
+		repeatClick: false
+	}, function(ret) {
+		console.log(ret);
+	});
+
+	function openMy() {
+		api.openDrawerPane({
+			type: 'left'
+		});
+	};
+</script>
+
+</html>

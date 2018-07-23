@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css">
+    <style>
+        body {
+            background: #ffffff;
+        }
+
+        .personmessage {
+            width: 100%;
+            height: 3.25rem;
+            padding-left: 4%;
+            background-color: white;
+        }
+
+        .personmessage img {
+            width: 2.25rem;
+            height: 2.25rem;
+            margin-top: 0.6rem;
+        }
+
+        .personmessage_wenzi {
+            float: left;
+            height: 100%;
+            width: 80%;
+            margin-left: 3%;
+            padding-right: 2%;
+        }
+
+        .personmessage_icon {
+            height: 3.25rem;
+            width: auto;
+            float: left;
+        }
+
+        .personmessage_wenzitopic {
+            float: left;
+            height: auto;
+            margin-top: 0.5rem;
+        }
+
+        .personmessage_wenzitopic p {
+            font-size: 0.7rem;
+        }
+
+        .personmessage_wenziicon {
+            float: right;
+            height: 100%;
+        }
+
+        .personmessage_wenziicon img {
+            width: 0.8rem;
+            height: 0.8rem;
+            margin-top: 1.225rem;
+        }
+
+        .space {
+            background-color: #f2f2f2;
+            height: 0.5rem;
+            width: 100%;
+        }
+
+        .inform {
+            height: 2.5rem;
+            background-color: white;
+            border-bottom: 0.05rem solid #f2f2f2;
+            padding-left: 5%;
+            padding-right: 2%;
+        }
+
+        .inform img {
+            width: 1.25rem;
+            height: 1.25rem;
+            float: right;
+            margin-top: 0.625rem;
+        }
+
+        .inform h4 {
+            float: left;
+            margin-top: 0.625rem;
+        }
+
+        .inform_details {
+            height: 4rem;
+            width: 100%;
+            padding-left: 5%;
+            padding-right: 2%;
+            background-color: white;
+            border-bottom: 0.05rem solid #f2f2f2;
+        }
+
+        .inform_comment {
+            height: 7.5rem;
+            width: 100%;
+            padding-left: 5%;
+            padding-right: 2%;
+            background-color: white;
+            border-bottom: 0.05rem solid #f2f2f2;
+        }
+
+        .inform_details_iron {
+            float: left;
+            height: 4rem;
+        }
+
+        .inform_details_commentiron {
+            float: left;
+            height: 7.5rem;
+        }
+
+        .inform_details_iron img {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 1.25rem;
+            margin-top: 0.75rem;
+        }
+
+        .inform_details_commentiron img {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 1.25rem;
+            margin-top: 2.25rem;
+        }
+
+        .inform_details_p {
+            float: left;
+            margin-left: 5%;
+            width: 80%;
+            padding-top: 1rem;
+        }
+
+        .inform_details_p_02 {
+            float: right;
+            margin-top: 0.6rem;
+            font-size: 0.6rem;
+            color: #707070;
+        }
+
+        .inform_details_p_03 {
+            float: right;
+            margin-top: 2rem;
+            font-size: 0.6rem;
+            color: #707070;
+        }
+
+        .topic {
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .messageempty {
+            margin-top: 5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #ff9933;
+            line-height: 100%;
+            height: 100%;
+            background-color: #ffffff;
+        }
+
+        .inform_details_p_last {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+        }
+
+        .inform_details_commentlast {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+            margin-top: 0.25rem;
+        }
+
+        .inform_details_commenttitle {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+            height: 1.5rem;
+            background: #f2f2f2;
+            padding-left: 5%: padding-right: 2%;
+            font-size: 0.7rem;
+            margin-top: 0.25rem;
+            line-height: 1.5rem;
+        }
+
+        .inform_details_p_middle {
+            color: #ff9933;
+            /*overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;*/
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <div class="personmessage">
+        <div class="personmessage_icon">
+            <img src="../image/ask_blue.png" alt="">
+        </div>
+
+        <div class="personmessage_wenzi" tapmode onclick="openpersonmessage();">
+            <div class="personmessage_wenzitopic">
+                <h3 class="topic">私信</h3>
+            </div>
+            <div class="personmessage_wenziicon">
+                <img src="../image/arrow_right_grey.png" alt="">
+            </div>
+        </div>
+    </div> -->
+
+    <div class="space"></div>
+
+    <div class="inform">
+        <h4>通知列表</h4>
+        <!-- <img src="../image/grey_share.png" alt=""> -->
+    </div>
+
+    <div class="messageempty" id="messageempty">
+      暂时没有消息哦~
+    </div>
+    <div id="personmessage-box">
+
+    </div>
+
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script type="text/javascript" src="../script/aui-scroll.js"></script>
+<script type="text/javascript" src="../script/doT.js"></script>
+<script type="text/javascript">
+    var local_userInfo = $api.getStorage('local_userInfo');
+    var timeString;
+    // var nickname;
+    // var avatar;
+    // var content;
+    // var createdAt;
+    var title;
+    var idd;
+    var skipNum = 0;
+    var limitNum = 10;
+    var tag = true;
+    var loading;
+    apiready = function() {
+        query();
+
+        pullAdd();
+
+    };
+
+    //上拉加载
+    function pullAdd() {
+        var scroll = new auiScroll({
+            listen: true, //是否监听滚动高度，开启后将实时返回滚动高度
+            distance: 20 //判断到达底部的距离，isToBottom为true
+        }, function(ret) {
+            //		   console.log(JSON.stringify(ret))
+            if (ret.isToBottom == true && tag) {
+                tag = false;
+                pullAddQuery();
+            }
+        });
+    }
+
+    function time(str) {
+        Date.prototype.Format = function(fmt) { //author: meizz
+            var o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt))
+                fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt))
+                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+        var time = new Date(str);
+        timeString = time.Format("yyyy-MM-dd");
+        return timeString;
+        //alert(JSON.stringify(ret));
+        //$('#inform_details_p_02').html(timeString);
+    }
+
+
+
+    function query() { //查询函数 查询 关注 还是评论
+        var UILoading = api.require('UILoading');
+        UILoading.flower({
+            center: {
+                x: api.winWidth / 2.0,
+                y: api.winHeight / 2.0
+            },
+            size: 45,
+            fixed: true
+        }, function(ret) {
+            //alert(JSON.stringify(ret));
+            loading = ret.id;
+
+        });
+
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("message");
+        Model.query({
+            filter: {
+                "where": {
+                    "acceptId": local_userInfo.id,
+                    "or": [{
+                        "type": 0
+                    }, {
+                        "type": 2
+                    }]
+                },
+                "order": "createdAt DESC",
+                "skip":skipNum,
+                "limit": limitNum,
+                "include": ["senderIdPointer", "commentIdPointer", "articleIdPointer"]
+                    // "include":"commentIdPointer"
+            }
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+            } else {
+                //处理数据 ret
+
+                // alert(local_userInfo.id);
+                // alert(JSON.stringify(ret));
+                if (ret[0] == null) {
+                    // document.getElementById('messageempty').innerHTML = '暂时没有消息哦~';
+                    UILoading.closeFlower({
+                        id: loading
+                    });
+                    loading = 0;
+                } else {
+                    //alert(JSON.stringify(ret));
+                    $("#messageempty").remove();
+
+                    for (var i = 0; i < ret.length; i++) {
+                        if (ret[i].type == 0) {
+                            // var ti = queryarticle(ret[i].commentId.id);
+                            //alert(i);
+                            console.log(i);
+                            // alert(JSON.stringify(ret[i].commentId.content));
+                            var nickname = ret[i].senderId.nickname;
+                            var avatar = ret[i].senderId.avatar;
+                            var content = ret[i].commentId.content;
+                            var createdAt = ret[i].createdAt;
+                            //alert(JSON.stringify(ret[i].commentId.content));
+                            // pinglun(ret[i].commentId.id);
+
+                            Date.prototype.Format = function(fmt) { //author: meizz
+                                var o = {
+                                    "M+": this.getMonth() + 1, //月份
+                                    "d+": this.getDate(), //日
+                                    "h+": this.getHours(), //小时
+                                    "m+": this.getMinutes(), //分
+                                    "s+": this.getSeconds(), //秒
+                                    "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                                    "S": this.getMilliseconds() //毫秒
+                                };
+                                if (/(y+)/.test(fmt))
+                                    fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                                for (var k in o)
+                                    if (new RegExp("(" + k + ")").test(fmt))
+                                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                                return fmt;
+                            }
+                            var time = new Date(createdAt);
+                            var timeString = time.Format("yyyy-MM-dd");
+                            // alert(ret[i].commentId.id);
+                            idd = ret[i].commentId.id;
+                            if (ret[i].articleId == null) {
+                                //删除message表中该条数据
+                                // alert(ret[i].id);
+
+                                deleteMessage(ret[i].id);
+                                //停止转圈
+                                UILoading.closeFlower({
+                                    id: loading
+                                });
+                                loading=0;
+                                return false;
+                            }
+                            else if (ret[i].senderId.id==local_userInfo.id) {
+                              // alert(ret[i].id);
+                              deleteMessage(ret[i].id);
+
+                              continue;
+                            }
+                            else {
+                                $("#personmessage-box").append("<div tapmode onclick='opendetails(\"" + ret[i].articleId.id + "\");' class='inform_comment'><div class='inform_details_commentiron'><img src='" + ret[i].senderId.avatar +
+                                    "' class='inform_details_avatar'></div><div class='inform_details_p'><span>" + ret[i].senderId.nickname +
+                                    "</span> <span class='inform_details_p_middle' id='inform_details_p_middle'>评论了:</span><div class='inform_details_commenttitle'>" + ret[i].articleId.title +
+                                    "</div><span class='inform_details_commentlast' id='inform_details_p_last'>" + ret[i].commentId.content + "</span><span  class='inform_details_p_02' id='inform_details_p_02'>" + timeString +
+                                    "</span></div></div>");
+                            }
+
+
+
+                        }
+                        if (ret[i].type == 2) {
+                            var createdAt = ret[i].createdAt;
+                            Date.prototype.Format = function(fmt) { //author: meizz
+                                var o = {
+                                    "M+": this.getMonth() + 1, //月份
+                                    "d+": this.getDate(), //日
+                                    "h+": this.getHours(), //小时
+                                    "m+": this.getMinutes(), //分
+                                    "s+": this.getSeconds(), //秒
+                                    "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                                    "S": this.getMilliseconds() //毫秒
+                                };
+                                if (/(y+)/.test(fmt))
+                                    fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                                for (var k in o)
+                                    if (new RegExp("(" + k + ")").test(fmt))
+                                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                                return fmt;
+                            }
+                            var time = new Date(createdAt);
+                            var timeString = time.Format("yyyy-MM-dd");
+                            // alert(ret[i].senderId);
+                            $("#personmessage-box").append("<div tapmode onclick='openpersonalpage(\"" + ret[i].senderId.id + "\");' class='inform_details'><div class='inform_details_iron'><img src='" + ret[i].senderId.avatar +
+                                "'></div><div class='inform_details_p'><span>" + ret[i].senderId.nickname +
+                                "</span> <span class='inform_details_p_middle' id='inform_details_p_middle'>关注了</span> <span  id='inform_details_p_last'>   我</span><span  class='inform_details_p_03' id='inform_details_p_03'>" +
+                                timeString + "</span></div></div>");
+                        }
+
+                    }
+                    UILoading.closeFlower({
+                        id: loading
+                    });
+                    loading = 0;
+                    // limitNum = limitNum + limitNum;
+                    skipNum=skipNum+limitNum;
+                    tag = true;
+
+                    // var UILoading = api.require('UILoading');
+
+                }
+            }
+        })
+    }
+
+    function pullAddQuery() {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("message");
+        Model.query({
+            filter: {
+                "where": {
+                    "acceptId": local_userInfo.id,
+                    "or": [{
+                        "type": 0
+                    }, {
+                        "type": 2
+                    }]
+                },
+                "order": "createdAt DESC",
+                "skip":skipNum,
+                "limit": limitNum,
+                "include": ["senderIdPointer", "commentIdPointer", "articleIdPointer"]
+                    // "include":"commentIdPointer"
+            }
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+            } else {
+                //处理数据 ret
+
+                // alert(local_userInfo.id);
+                // alert(JSON.stringify(ret));
+                if (ret[0] == null) {
+                    // document.getElementById('messageempty').innerHTML = '暂时没有消息哦~';
+                } else {
+                    //alert(JSON.stringify(ret));
+                    $("#messageempty").remove();
+
+                    for (var i = 0; i < ret.length; i++) {
+                        if (ret[i].type == 0) {
+                            // var ti = queryarticle(ret[i].commentId.id);
+                            //alert(i);
+                            console.log(i);
+                            // alert(JSON.stringify(ret[i].commentId.content));
+                            var nickname = ret[i].senderId.nickname;
+                            var avatar = ret[i].senderId.avatar;
+                            var content = ret[i].commentId.content;
+                            var createdAt = ret[i].createdAt;
+                            //alert(JSON.stringify(ret[i].commentId.content));
+                            // pinglun(ret[i].commentId.id);
+
+                            Date.prototype.Format = function(fmt) { //author: meizz
+                                var o = {
+                                    "M+": this.getMonth() + 1, //月份
+                                    "d+": this.getDate(), //日
+                                    "h+": this.getHours(), //小时
+                                    "m+": this.getMinutes(), //分
+                                    "s+": this.getSeconds(), //秒
+                                    "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                                    "S": this.getMilliseconds() //毫秒
+                                };
+                                if (/(y+)/.test(fmt))
+                                    fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                                for (var k in o)
+                                    if (new RegExp("(" + k + ")").test(fmt))
+                                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                                return fmt;
+                            }
+                            var time = new Date(createdAt);
+                            var timeString = time.Format("yyyy-MM-dd");
+                            // alert(ret[i].commentId.id);
+                            idd = ret[i].commentId.id;
+                            if (ret[i].articleId == null) {
+                                //删除message表中该条数据
+                                // alert(ret[i].id);
+
+                                deleteMessage(ret[i].id);
+                                //停止转圈
+                                return false;
+                            }
+                            else if (ret[i].senderId.id==local_userInfo.id) {
+                              // alert(ret[i].id);
+                              deleteMessage(ret[i].id);
+
+                              continue;
+                            }
+                            else {
+                                $("#personmessage-box").append("<div tapmode onclick='opendetails(\"" + ret[i].articleId.id + "\");' class='inform_comment'><div class='inform_details_commentiron'><img src='" + ret[i].senderId.avatar +
+                                    "' class='inform_details_avatar'></div><div class='inform_details_p'><span>" + ret[i].senderId.nickname +
+                                    "</span> <span class='inform_details_p_middle' id='inform_details_p_middle'>评论了:</span><div class='inform_details_commenttitle'>" + ret[i].articleId.title +
+                                    "</div><span class='inform_details_commentlast' id='inform_details_p_last'>" + ret[i].commentId.content + "</span><span  class='inform_details_p_02' id='inform_details_p_02'>" + timeString +
+                                    "</span></div></div>");
+                            }
+
+                        }
+                        if (ret[i].type == 2) {
+                            var createdAt = ret[i].createdAt;
+                            Date.prototype.Format = function(fmt) { //author: meizz
+                                var o = {
+                                    "M+": this.getMonth() + 1, //月份
+                                    "d+": this.getDate(), //日
+                                    "h+": this.getHours(), //小时
+                                    "m+": this.getMinutes(), //分
+                                    "s+": this.getSeconds(), //秒
+                                    "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                                    "S": this.getMilliseconds() //毫秒
+                                };
+                                if (/(y+)/.test(fmt))
+                                    fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                                for (var k in o)
+                                    if (new RegExp("(" + k + ")").test(fmt))
+                                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                                return fmt;
+                            }
+                            var time = new Date(createdAt);
+                            var timeString = time.Format("yyyy-MM-dd");
+                            // alert(ret[i].senderId);
+                            $("#personmessage-box").append("<div tapmode onclick='openpersonalpage(\"" + ret[i].senderId.id + "\");' class='inform_details'><div class='inform_details_iron'><img src='" + ret[i].senderId.avatar +
+                                "'></div><div class='inform_details_p'><span>" + ret[i].senderId.nickname +
+                                "</span> <span class='inform_details_p_middle' id='inform_details_p_middle'>关注了</span> <span  id='inform_details_p_last'>   我</span><span  class='inform_details_p_03' id='inform_details_p_03'>" +
+                                timeString + "</span></div></div>");
+                        }
+
+                    }
+                    // limitNum = limitNum + limitNum;
+                    skipNum=skipNum+limitNum;
+                    tag = true;
+
+                    // var UILoading = api.require('UILoading');
+
+                }
+            }
+        })
+    }
+
+    //删除消息操作
+    function deleteMessage(id) {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("message");
+        Model.delete({
+            "_id": id
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+            } else {
+                // alert("delete");
+            }
+        })
+    }
+
+
+    function openpersonalpage(id) {
+        api.openWin({
+            name: 'lx_otherpersonal_page',
+            url: 'lx_otherpersonal_page.html',
+            pageParam: { //给目标也没传递参数
+                "id": id
+            }
+        });
+    }
+
+    function openpersonmessage() {
+        // api.openWin({
+        //     name: 'message_personmessage_header',
+        //     url: 'message_personmessage_header.html',
+        //     pageParam: {
+        //         name: 'test'
+        //     }
+        // });
+        //alert("功能正在装配中~");
+        api.toast({
+            msg: '功能正在装配中~',
+            duration: 2000,
+            location: 'bottom'
+        })
+    }
+
+    function opendetails(id) {
+        api.openWin({
+            name: 'home_detail_personnal_header',
+            url: 'home_detail_personnal_header.html',
+            pageParam: { //给目标也没传递参数
+                "id": id
+            }
+        });
+    }
+</script>
+
+</html>

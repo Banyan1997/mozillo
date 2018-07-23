@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css">
+    <style>
+        body {}
+
+        #add {
+            background-color: #ff9933;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            -moz-border-radius: 50%;
+            -webkit-border-radius: 50%;
+            position: fixed;
+            top: 80%;
+            left: 75%;
+            z-index: 100;
+            box-shadow: 1px 1px 5px #888888;
+        }
+
+        #add img {
+            height: 1.8rem;
+            width: 1.8rem;
+            position: relative;
+            left: 0.6rem;
+            top: 0.6rem;
+        }
+
+        .aui-card-list-header {
+            color: #ff9933;
+        }
+
+        .icon {
+            float: left;
+            width: 1rem;
+            height: 1rem;
+            margin-right: 0.15rem;
+        }
+
+        .title {
+            padding: 0 0.75rem;
+            font-size: 0.8rem;
+            font-style: normal;
+            color: #ff9933;
+        }
+
+        .con_pic {
+            height: 10rem;
+        }
+
+        .aui-img-round {
+            height: 2rem;
+        }
+
+        #messageempty {
+            margin-top: 5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #ff9933;
+            line-height: 100%;
+            height: 100%;
+            background-color: #ffffff;
+        }
+
+        .empty_text {
+            margin-top: 5rem;
+
+            background-color: #fff;
+            margin: 0 auto;
+        }
+        .empty {
+            color: #ff9933;
+            background-color: #fff;
+            text-align: center;
+        }
+
+    </style>
+</head>
+
+<body>
+    <!-- <div id="add" tapmode onclick="addnew();">
+        <img src="../image/add.png">
+    </div> -->
+    <ul id="articleList">
+        
+    </ul>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/swiper.js"></script>
+<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+<script type="text/javascript" src="../script/doT.js"></script>
+<script type="text/javascript" src="../script/time.js"></script>
+<script type="text/javascript" src="../script/aui-scroll.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script id="followArticleList" type="text/x-dot-template">
+    {{~it:value:index}}
+    <li>
+        <div class="aui-card-list">
+            <div class="aui-card-list-header aui-card-list-user" onclick="person('{{= value.authorId.id }}');">
+                <div class="aui-card-list-user-avatar">
+                    <img src="{{= value.authorId.avatar }}" class="aui-img-round" />
+                </div>
+                <div class="aui-card-list-user-name">
+                    <div>{{= value.authorId.nickname }}</div>
+                    <div>提出了新点子</div>
+                </div>
+                <div class="aui-card-list-user-info">{{=apicloudTimeFormat(value.createdAt,'yyyy-MM-dd hh:mm')}}</div>
+            </div>
+            <div class="title" onclick="detail('{{= value.id }}','{{= value.authorId.id }}');">{{= value.title }}</div>
+            <div class="aui-card-list-content-padded" onclick="detail('{{= value.id }}','{{= value.authorId.id }}');">
+                <div>{{= value.content.substr(0, 80) + "......"}}
+                </div>
+                <img src="{{= value.pictureArray[0] }}" class="con_pic" />
+            </div>
+        </div>
+    </li>
+    {{~}}
+</script>
+
+<script type="text/javascript">
+    var userInfo = $api.getStorage('local_userInfo');
+    var concernId = userInfo.id;
+    var j = 0;
+    var skipNum = 0;
+    var limitNum = 5;
+    var tag = true;
+    var loading;
+    // var delayRefresh = true;
+    apiready = function() {
+
+        // api.setRefreshHeaderInfo({
+        //     loadingImg: 'widget://image/refresh.png',
+        //     bgColor: '#fff',
+        //     textColor: '#ff9933',
+        //     textDown: '下拉刷新...',
+        //     textUp: '松开刷新...'
+        // }, function(ret, err) {
+        //     api.refreshHeaderLoadDone()
+        //     if(delayRefresh) {
+        //         delayRefresh = false;
+        //         query();
+        //         setTimeout("delayRefresh = true", 3000);
+        //     }
+        //         //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+        // });
+
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#fff',
+            images: [
+                'widget://image/refresh/pic1.png',
+                'widget://image/refresh/pic2.png',
+                'widget://image/refresh/pic3.png',
+                'widget://image/refresh/pic4.png',
+                'widget://image/refresh/pic5.png',
+                'widget://image/refresh/pic6.png',
+                'widget://image/refresh/pic7.png',
+                'widget://image/refresh/pic8.png'
+            ],
+            tips: {
+                pull: '下拉刷新',
+                threshold: '松开立即刷新',
+                load: '正在刷新'
+            }
+        }, function() {
+                refreshQuery();
+        });
+
+        query();
+
+        pullAdd();
+
+    };
+
+    //上拉加载
+    function pullAdd() {
+        var scroll = new auiScroll({
+            listen: true, //是否监听滚动高度，开启后将实时返回滚动高度
+            distance: 0 //判断到达底部的距离，isToBottom为true
+        }, function(ret) {
+            //		   console.log(JSON.stringify(ret))
+            if (ret.isToBottom == true && tag) {
+                tag = false;
+                pullAddQuery();
+            }
+        });
+    }
+
+    function query() {
+        // alert(concernId);
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("concern");
+        Model.query({
+            filter: {
+                "fields": {
+                    "beconcernedId": true
+                },
+                "where": {
+                    "concernId": concernId
+                },
+                "include": "beconcernedIdPointer"
+            }
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+                // alert("错误");
+            } else {
+                //处理数据 ret
+                var retArray = new Array();
+                for (var i = 0; i < ret.length; i++) {
+                    retArray[i] = ret[i].beconcernedId.id;
+                    // alert(retArray[i]);
+                }
+                // alert(retArray);
+                query2(retArray);
+            }
+        })
+
+    };
+
+    function query2(array) {
+        var UILoading = api.require('UILoading');
+        UILoading.flower({
+            center: {
+                x: api.winWidth / 2.0,
+                y: api.winHeight / 2.0
+            },
+            size: 45,
+            fixed: true
+        }, function(ret) {
+            //alert(JSON.stringify(ret));
+            loading = ret.id;
+
+        });
+        var client1 = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model1 = client1.Factory("article");
+        Model1.query({
+            filter: {
+                "order": "createdAt DESC",
+                "fields": {
+                    "id": true,
+                    "title": true,
+                    "content": true,
+                    "picture": true,
+                    "authorId": true,
+                    "createdAt": true,
+                    "pictureArray": true
+
+                },
+                "include": "authorIdPointer",
+                "limit": 15,
+                "where": {
+                    "authorId": {
+                        "inq": array
+                    }
+                }
+            }
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+                // alert(err);
+            } else {
+                //处理数据 ret
+                if (ret[0] == null) {
+                    $('#articleList').html("<div id='messageempty'>暂时没有搜索内容哦~</div>");
+                    for(var i = 0; i <= loading; i++){
+                        UILoading.closeFlower({
+                            id: i
+                        });
+                    }
+                } else {
+                    var followArticleList = doT.template($('#followArticleList').html());
+                    $('#articleList').html(followArticleList(ret));
+                    for(var i = 0; i <= loading; i++){
+                        UILoading.closeFlower({
+                            id: i
+                        });
+                    }
+                }
+                tag = true;
+
+            }
+        })
+    }
+
+    function refreshQuery() {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("concern");
+        Model.query({
+            filter: {
+                "fields": {
+                    "beconcernedId": true
+                },
+                "where": {
+                    "concernId": concernId
+                },
+                "include": "beconcernedIdPointer"
+            }
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+                // alert("错误");
+            } else {
+                //处理数据 ret
+                var retArray = new Array();
+                for (var i = 0; i < ret.length; i++) {
+                    retArray[i] = ret[i].beconcernedId.id;
+                }
+                // alert(retArray);
+                var client1 = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+                var Model1 = client1.Factory("article");
+                Model1.query({
+                    filter: {
+                        "order": "createdAt DESC",
+                        "fields": {
+                            "id": true,
+                            "title": true,
+                            "content": true,
+                            "picture": true,
+                            "authorId": true,
+                            "createdAt": true,
+                            "pictureArray": true
+
+                        },
+                        "include": "authorIdPointer",
+                        "limit": 15,
+                        "where": {
+                            "authorId": {
+                                "inq": retArray
+                            }
+                        }
+                    }
+                }, function(ret, err) {
+                    if (err) {
+                        //处理错误 err
+                        // alert(err);
+                    } else {
+                        //处理数据 ret
+                        // alert(JSON.stringify(ret));
+                        // alert(ret[0].pictureArray);
+
+                        if (ret[0] == null) {
+                            $('#articleList').html("<div id='messageempty'>暂时没有搜索内容哦~</div>");
+                        } else {
+                            var followArticleList = doT.template($('#followArticleList').html());
+                            $('#articleList').html(followArticleList(ret));
+                        }
+                        tag = true;
+                        api.refreshHeaderLoadDone()
+
+                    }
+                })
+            }
+        })
+
+        
+    }
+
+    function pullAddQuery() {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("concern");
+        Model.query({
+            filter: {
+                "fields": {
+                    "beconcernedId": true
+                },
+                "where": {
+                    "concernId": concernId
+                },
+                "include": "beconcernedIdPointer"
+            }
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+                // alert("错误");
+            } else {
+                //处理数据 ret
+                var retArray = new Array();
+                for (var i = 0; i < ret.length; i++) {
+                    retArray[i] = ret[i].beconcernedId.id;
+                }
+                var client1 = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+                var Model1 = client1.Factory("article");
+                Model1.query({
+                    filter: {
+                        "order": "createdAt DESC",
+                        "fields": {
+                            "id": true,
+                            "title": true,
+                            "content": true,
+                            "picture": true,
+                            "authorId": true,
+                            "createdAt": true,
+                            "pictureArray": true
+
+                        },
+                        "include": "authorIdPointer",
+                        "limit": limitNum,
+                        "where": {
+                            "authorId": {
+                                "inq": retArray
+                            }
+                        }
+                    }
+                }, function(ret, err) {
+                    if (err) {
+                        //处理错误 err
+                        // alert(err);
+                    } else {
+                        var followArticleList = doT.template($('#followArticleList').html());
+                        $('#articleList').html(followArticleList(ret));
+                        limitNum = limitNum + limitNum;
+                        tag = true;
+                    }
+                })
+            }
+        })
+    }
+
+    function detail(id, authorId) {
+        api.openWin({
+            name: 'detail',
+            url: './home_detail_header.html',
+            pageParam: {
+                "id": id,
+                "authorId": authorId
+            }
+        });
+    };
+
+    function person(id) {
+        api.openWin({
+            name: 'lx_otherpersonal_page',
+            url: './lx_otherpersonal_page.html',
+            pageParam: {
+                "id": id
+            }
+        });
+    }
+
+    function changePraise() {
+        var pra = $api.byId('praise');
+        var praise_num = $api.byId('praise_num');
+        var num = praise_num.innerText;
+        var now = pra.getAttribute('src');
+        if (now == "../image/praise_grey.png") {
+            pra.setAttribute('src', '../image/praise_orange.png');
+            var new_num = Number(num) + 1;
+            praise_num.innerText = new_num;
+        } else {
+            pra.setAttribute('src', '../image/praise_grey.png');
+            var new_num = Number(num) - 1;
+            praise_num.innerText = new_num;
+        }
+    }
+
+
+    function changeCollect() {
+        var collect = $api.byId('collect');
+        var now = collect.getAttribute('src');
+        if (now == "../image/collect_grey.png")
+            collect.setAttribute('src', '../image/collect_orange.png')
+        else
+            collect.setAttribute('src', '../image/collect_grey.png')
+    }
+
+    function addnew() {
+        api.openWin({
+            name: 'zqx_edit_header',
+            url: './zqx_edit_header.html',
+            pageParam: {
+                name: 'test'
+            }
+        });
+    };
+</script>
+
+</html>

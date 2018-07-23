@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css">
+
+    <style>
+        body {
+            background-color: #ffffff;
+            position: absolute;
+        }
+
+        header a img {
+            height: 1.25rem;
+            width: 1.25rem;
+        }
+
+        .main {
+            height: auto;
+            margin: 0 auto;
+        }
+
+        .main_body {
+            margin-top: 0.5rem;
+            margin-left: 0.75rem;
+            margin-right: 0.75rem;
+            position: relative;
+        }
+
+        .main_body p {
+            margin: 0.25rem;
+        }
+
+        .main_img {
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .main_img img {
+            margin-top: 0.25rem;
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            display: block;
+        }
+
+        .aui-bar-nav {
+            background-color: #fff;
+            color: #ff9933;
+            border: 1px solid #F2F2F2;
+        }
+
+        .aui-bar-nav.aui-bar-light .aui-iconfont {
+            color: #ff9933;
+        }
+
+        #title {
+            display: block;
+            margin: 10px auto;
+            line-height: 1.25rem;
+        }
+
+        .aui-img-round {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .main_pic {
+            margin-bottom: 0.5rem;
+            max-height: 20rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <div class="main">
+      <div class="aui-bar aui-bar-nav">我们也可以做出fate/stay night这样的游戏</div>
+        <div class="aui-card-list-header aui-card-list-user">
+            <div class="aui-card-list-user-avatar" tapmode onclick="person();">
+                <img src="../image/hot_head_01.jpeg" class="aui-img-round" />
+            </div>
+            <div class="aui-card-list-user-name">
+                <div tapmode onclick="person();">张津榕</div>
+                <div >提出了新点子</div>
+                <span style="height:20px; width:20px;"><img id="follow" src="../image/attention_grey.png" tapmode onclick="changeFollow()" /></span>
+            </div>
+            <div class="aui-card-list-user-info">2小时前</div>
+        </div>
+        <div class="main_body">
+            <p>每次去美心翠园吃饭的时候都会发现很多人会点它的招牌甜点：拿破仑蛋糕。
+               它家的拿破仑蛋糕大概两个巴掌大吧，可是足足有15厘米高。
+               所以每次一上桌都会被疯狂拍照。 还好它不是热菜，要不然在南方没不供暖的冬天，这样拍一轮的话菜里面的油恐怕都凝起来了。
+            </p>
+            <div class="main_img"><img src="../image/hot_bg_02.jpg"></img></div>
+            <p>每次去美心翠园吃饭的时候都会发现很多人会点它的招牌甜点：拿破仑蛋糕。
+               它家的拿破仑蛋糕大概两个巴掌大吧，可是足足有15厘米高。
+               所以每次一上桌都会被疯狂拍照。 还好它不是热菜，要不然在南方没不供暖的冬天，这样拍一轮的话菜里面的油恐怕都凝起来了。
+            </p>
+            <div class="main_img"><img src="../image/000.jpg"></img></div>
+        </div>
+    </div> -->
+    <div class="main" id="detail_content">
+
+    </div>
+
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+<script type="text/javascript" src="../script/doT.js"></script>
+<script type="text/javascript" src="../script/time.js"></script>
+<script type="text/javascript" src="../script/aui-scroll.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script id="article_detail" type="text/x-dot-template">
+    {{~it:value:index}}
+    <div class="aui-bar aui-bar-nav">
+        <span id="title">
+        {{= value.title }}
+        </span>
+    </div>
+    <div class="aui-card-list-header aui-card-list-user">
+        <div class="aui-card-list-user-avatar" tapmode onclick="person('{{= value.authorId.id }}');">
+            <img src="{{= value.authorId.avatar }}" class="aui-img-round" />
+        </div>
+        <div class="aui-card-list-user-name">
+            <div tapmode onclick="person('{{= value.authorId.id }}');">{{= value.authorId.nickname }}</div>
+            <!-- <div>提出了新点子</div> -->
+
+        </div>
+        <div class="aui-card-list-user-info">{{=apicloudTimeFormat(value.createdAt,'yyyy-MM-dd hh:mm')}}</div>
+    </div>
+    <div class="main_body">
+        <div class="main_img" id="picture">
+            {{~value.pictureArray:value2}}
+            <img src="{{= value2 }}" class="main_pic" tapmode onclick="openPhotoBS('{{= value2 }}')">
+            {{~}}
+        </div>
+        <div id="content">
+            {{= value.content }}
+        </div>
+    </div>
+    {{~}}
+</script>
+<script type="text/javascript">
+    var articleId;
+    var authorId;
+    var local_userId = $api.getStorage('local_userInfo').id;
+    var userInfo = $api.getStorage('local_userInfo');
+    var photoBrowserStatus = false;
+    var photoBrowser;
+    apiready = function() {
+        articleId = api.pageParam.id;
+        photoBrowser = api.require('photoBrowser');
+        query(articleId);
+
+        api.addEventListener({
+            name: 'keybackFun2'
+        }, function(ret, err) {
+            keybackFun();
+        });
+
+         $(window).scroll(function(){
+            var scrollHeight =  $(document).scrollTop();
+            if(scrollHeight >= 150) {
+                api.sendEvent({
+                    name: 'titleBlock2',
+                });
+            }else {
+                api.sendEvent({
+                    name: 'titleNone2',
+                });
+            }
+        })
+    };
+
+
+    //通过文章id获取article表信息
+    function query(id) {
+        var UILoading = api.require('UILoading');
+        UILoading.flower({
+            center: {
+                x: api.winWidth/2.0,
+                y: api.winHeight/2.0
+            },
+            size: 45,
+            fixed: true
+        }, function(ret) {
+            //alert(JSON.stringify(ret));
+        });
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("article");
+        Model.query({
+            filter: {
+                "fields": {
+                    "title": true,
+                    "content": true,
+                    "pictureArray": true,
+                    "authorId": true,
+                    "praiseNum": true,
+                    "collectionNum": true,
+                    "commentNum": true,
+                    "createdAt": true,
+                    "concern": true
+                },
+                "where": {
+                    "_id": id
+                },
+                "include": "authorIdPointer"
+            }
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+            } else {
+
+
+                //处理数据 ret
+                //queryConcern(authorId);
+                authorId = ret[0].authorId.id;
+                var formatContent = ret[0].content;
+                // for(var i = 0; i < formatContent.length; i++){
+                //     alert(formatContent[i].charCodeAt())
+                // }
+                // formatContent = formatContent.replace('\n', '</br>');
+                formatContent = formatContent.replace(/\n/g, "<br/>");
+                formatContent = formatContent.replace(/\s/g, "&nbsp");
+                ret[0].content = formatContent;
+                var article_detail = doT.template($('#article_detail').html());
+                $('#detail_content').html(article_detail(ret));
+                // alert(JSON.stringify(ret));
+                UILoading.closeFlower({
+                    id: 0
+                });
+            }
+        })
+    }
+
+    function person(id) {
+
+        if (userInfo.id == id) {
+            api.openWin({
+                name: 'lx_personal_page',
+                url: './lx_personal_page.html'
+            });
+        } else {
+            api.openWin({
+                name: 'lx_otherpersonal_page',
+                url: './lx_otherpersonal_page.html',
+                pageParam: {
+                    "id": id
+                }
+            });
+        }
+    }
+
+    function openPhotoBS(path) {
+        photoBrowser.open({
+            images: [
+                path
+            ],
+            // placeholderImg: 'widget://res/img/apicloud.png',
+            bgColor: '#000'
+        }, function(ret, err) {
+            if (ret) {
+                photoBrowserStatus = true;
+                if (ret.eventType == "click") {
+                    photoBrowser.close();
+                    photoBrowserStatus = false;
+                }
+            } else {
+                // alert(JSON.stringify(err));
+            }
+        });
+    }
+
+    function keybackFun() {
+        if(photoBrowserStatus) {
+            photoBrowser.close();
+            photoBrowserStatus = false;
+        }else {
+            api.closeWin();
+        }
+    }
+</script>
+
+</html>

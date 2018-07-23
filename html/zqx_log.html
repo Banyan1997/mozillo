@@ -1,0 +1,380 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css">
+    <style>
+        html,body {
+            height: 100%;
+            width: 100%;
+            background-color: #fafafa;
+        }
+
+        /*.wrap {
+            position: absolute;
+            bottom: 0;
+            height: 100%;
+            width: 100%;
+
+            background-color: #fafafa;
+        }*/
+
+        .top_blank {
+            height: 1rem;
+            width: 100%;
+        }
+
+        .input_box {
+            height: 3.4rem;
+            width: 100%;
+        }
+
+        .input_box .input_icon_box {
+            height: 3.4rem;
+            width: 1.25rem;
+            display: inline-block;
+            float: left;
+            margin-left: 0.5rem;
+        }
+
+        .input_icon {
+            height: 1.25rem;
+            width: 1.25rem;
+            margin-top: 1.05rem;
+        }
+
+        .input_box .input_text {
+            height: 3.3rem;
+            width: 80%;
+            border: none;
+            background-color: #fafafa;
+            float: left;
+            margin-left: 1rem;
+            margin-right: -5.5rem;
+            font-size: 0.7rem;
+        }
+
+        .line_box {
+            width: 100%;
+            height: 0.05rem;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        .line {
+            height: 0.05rem;
+            width: 100%;
+            background-color: #d7d7d7;
+        }
+
+        .btn_log {
+            height: 2rem;
+            width: 9rem;
+            background-color: #ff9933;
+            margin: 1.5rem auto 0;
+            border-radius: 1rem;
+            text-align: center;
+            line-height: 2rem;
+            border-radius: 700;
+            font-size: 0.7rem;
+            color: #ffffff;
+        }
+
+        .btn_log:active {
+            background-color: #aeaeae;
+        }
+
+        .middle_blank {
+            height: 2rem;
+            width: 100%;
+        }
+
+        .forget {
+            float: left;
+            font-size: 0.6rem;
+            color: #aeaeae;
+            margin-top: 1rem;
+            margin-left: 0.5rem;
+        }
+
+        .regist {
+            font-size: 0.6rem;
+            color: #aeaeae;
+            margin-top: 1rem;
+            margin-right: 0.5rem;
+            float: right;
+        }
+
+        .other {
+            height: 1rem;
+            width: 10.1rem;
+            margin: 7.5rem auto 0;
+        }
+
+        .short_line {
+            height: 0.2rem;
+            width: 2.75rem;
+            display: inline-block;
+            border-top: 0.05rem solid #d7d7d7;
+            margin-top: -0.15rem;
+        }
+
+        .other_way {
+            height: 1rem;
+            width: 4rem;
+            display: inline-block;
+            font-size: 0.6rem;
+            color: #868686;
+            text-align: center;
+            line-height: 1rem;
+        }
+
+        .qq_weixin {
+            /*height: 75px;*/
+            width: 8rem;
+            margin: 1.5rem auto 0;
+        }
+
+        .qq {
+            height: 2rem;
+            width: 2rem;
+            margin-right: 3.7rem;
+            display: inline-block;
+        }
+
+        .weixin {
+            height: 2rem;
+            width: 2rem;
+            display: inline-block;
+        }
+
+        #tips {
+            height: 35px;
+            width: 100%;
+            background-color: #fafafa;
+            color: #ff9933;
+            text-align: center;
+            line-height: 35px;
+            font-size: 14px;
+        }
+    </style>
+
+    <body>
+        <!-- <div class="wrap"> -->
+            <div class="top_blank"></div>
+            <div class="input_box">
+                <div class="input_icon_box">
+                    <img src="../image/store_orange.png" alt="" class="input_icon">
+                </div>
+                <input id="username" type="text" name="" class="input_text" placeholder="手机号码">
+            </div>
+            <div class="line_box">
+                <div class="line"></div>
+            </div>
+            <div class="input_box">
+                <div class="input_icon_box">
+                    <img src="../image/specialist_orange.png" alt="" class="input_icon">
+                </div>
+                <input id="password" type="password" name="" class="input_text" placeholder="密码">
+            </div>
+            <div class="line_box">
+                <div class="line"></div>
+            </div>
+            <div id="tips">
+
+            </div>
+            <div class="btn_log" tapmode onclick="login()">
+                <span>登录</span>
+            </div>
+            <div class="middle_blank">
+                <p class="forget" tapmode onclick="openForgetPassword()">忘记密码？</p>
+                <p class="regist"  tapmode onclick="openPhoneReg()">快速注册></p>
+            </div>
+            <!-- <div class="other">
+                <div class="short_line"></div>
+                <div class="other_way">
+                    <span>其他登录方式</span>
+                </div>
+                <div class="short_line"></div>
+            </div>
+            <div>
+                <div class="qq_weixin">
+                    <img src="../image/qq.png" alt="" class="qq">
+                    <img src="../image/wechat.png" alt="" class="weixin">
+                </div>
+            </div> -->
+
+        <!-- </div> -->
+    </body>
+    <script type="text/javascript" src="../script/api.js"></script>
+    <script type="text/javascript" src="../script/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+    <script type="text/javascript" src="../script/constant.js"></script>
+    <script type="text/javascript">
+        var local_username = $api.getStorage('local_username');
+        var local_password = $api.getStorage('local_password');
+        var tips = $("#tips")
+        apiready = function() {
+            // $api.rmStorage('local_username');
+            // $api.rmStorage('local_password');
+            if (local_username && local_password) {
+                autoLogin();
+            }
+        };
+
+        function autoLogin() {
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("user");
+            Model.login({
+                "username": local_username,
+                "password": local_password
+            }, function(ret, err) {
+                if (err) {
+
+                } else {
+                    reSetStorage(ret.userId);
+                    api.openDrawerLayout({
+                        name: 'home_header',
+                        url: './home_header.html',
+                        animation: {
+                            type: 'none'
+                        },
+                        leftPane: {
+                            name: 'my',
+                            url: './my.html'
+                        }
+                    });
+                    api.closeWin({
+                        name: 'zqx_log_header'
+                    });
+                }
+            })
+        }
+
+        function login() {
+            var username = $("#username").val();
+            var password = $("#password").val();
+            if (username == '') {
+                tips.text("用户名不能为空！");
+                return false;
+            }
+            if (password == '') {
+                tips.text("密码不能为空！");
+                return false;
+            }
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("user");
+            Model.login({
+                "username": username,
+                "password": password
+            }, function(ret, err) {
+                if (err) {
+                    tips.text("用户名或密码不正确~");
+                } else {
+                    setStorage(ret.userId, username, password);
+                }
+            })
+        }
+
+        function setStorage(id, username, password) {
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("user");
+            /*根据id查询 前面加_
+             *其他不加_
+             */
+            Model.get({
+                "_id": id
+            }, function(ret, err) {
+                if (err) {
+
+                } else {
+                    $api.setStorage('local_userInfo', ret);
+                    $api.setStorage('local_username', username);
+                    $api.setStorage('local_password', password);
+                    api.openDrawerLayout({
+                        name: 'home_header',
+                        url: './home_header.html',
+                        pageParam: {
+                            name: 'test'
+                        },
+                        animation: {
+                            type: 'none'
+                        },
+                        leftPane: {
+                            name: 'my',
+                            url: './my.html'
+                        }
+                    });
+                    api.closeWin({
+                        name: 'zqx_log_header'
+                    });
+                }
+            })
+        }
+
+        function reSetStorage(id) {
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("user");
+            Model.get({
+                "_id": id
+            }, function(ret, err) {
+                if (err) {
+
+                } else {
+                    $api.setStorage('local_userInfo', ret);
+                    // api.closeWin();
+                }
+            })
+        }
+
+        function openPhoneReg() {
+            api.openWin({
+                name: 'zqx_phone_reg_header',
+                url: './zqx_phone_reg_header.html',
+                pageParam: {
+                    name: 'test'
+                }
+            });
+        }
+
+        function openForgetPassword() {
+            api.openWin({
+                name: 'zqx_forgetPassword_header',
+                url: './zqx_forgetPassword_header.html',
+                pageParam: {
+                    name: 'test'
+                }
+            });
+        }
+
+        function saveSuccess() {
+            api.toast({
+                msg: '修改密码成功',
+                duration: 2000,
+                location: 'bottom'
+            });
+        }
+
+        function regSuccess() {
+            api.toast({
+                msg: '注册成功',
+                duration: 2000,
+                location: 'bottom'
+            });
+        }
+
+        function relog() {
+            api.toast({
+                msg: '修改成功，请重新登录',
+                duration: 2000,
+                location: 'bottom'
+            });
+        }
+    </script>
+
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css">
+
+    <style>
+        .aui-margin-t-10 li {
+            background-color: #fff;
+            border-bottom: 1px solid #F2F2F2;
+        }
+
+        .aui-bar {
+            border-top: 1px solid #F2F2F2;
+            color: #ff9933;
+        }
+
+        .aui-bar-nav.aui-bar-light .aui-iconfont {
+            color: #ff9933;
+        }
+
+        .com_img img {
+            line-height: 3.3rem;
+            float: right;
+            width: 1.25rem;
+            height: 1.25rem;
+            margin: 0.5rem 0.5rem;
+        }
+
+        .aui-margin-t-10 {
+            margin-top: 0rem !important;
+        }
+
+        .aui-chat .aui-chat-left .aui-chat-media {
+            width: 2.2rem;
+            height: 2.2rem;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+        }
+
+        .aui-chat .aui-chat-left {
+            margin-top: 0.5rem;
+        }
+
+        .aui-chat .aui-chat-content {
+            border-radius: 0.9rem;
+        }
+
+        .aui-chat .aui-chat-left .aui-chat-inner {
+            max-width: 100%;
+            position: relative;
+            left: 2.2rem;
+        }
+
+        .color_footer {
+            background-color: #fff !important;
+            border-top: 1px #f2f2f2 solid;
+            padding-left: 0.5rem;
+        }
+
+        .input {
+            float: left;
+            width: 80%;
+        }
+
+        .footer_input {
+            font-size: 0.7rem!important;
+        }
+
+        .image img {
+            width: 1.1rem;
+            height: 1.1rem;
+            margin-top: 0.575rem;
+        }
+
+        .personircon {
+            float: right;
+            margin-top: 0.125rem;
+            padding-right: 0.5rem;
+        }
+
+        .image {
+            float: right;
+            margin-right: 0.75rem;
+        }
+
+        .personircon img {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 1.4rem;
+        }
+
+        .commentList {
+            border-bottom: 1px #f2f2f2 solid;
+        }
+
+        .aui-img-round {
+            width: 2rem!important;
+            height: 2rem!important;
+        }
+
+        #avatar {
+            height: 25px;
+            width: 25px;
+        }
+
+        .messageempty {
+            margin-top: 5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #ff9933;
+            line-height: 100%;
+            height: 100%;
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="margin-bottom: 47px;">
+        <div class="aui-margin-t-10">
+            <ul id="comment"></ul>
+        </div>
+    </div>
+    <div class="messageempty" id="messageempty">
+    </div>
+    <footer class="aui-bar aui-bar-tab color_footer" id="footer">
+        <div class="aui-list-item-input input">
+            <input class="footer_input" type="text" placeholder="说说你的想法..." id="commentContant">
+        </div>
+        <div class="personircon">
+            <!-- <img src="../image/001.png" /> -->
+        </div>
+        <div class="image" onclick="postComment()">
+            <img src="../image/send_grey.png" alt="" id="sendImg">
+        </div>
+
+    </footer>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/swiper.js"></script>
+<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+<script type="text/javascript" src="../script/doT.js"></script>
+<script type="text/javascript" src="../script/aui-scroll.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script type="text/javascript" src="../script/time.js"></script>
+<script id="comment_list" type="text/x-dot-template">
+    {{~it:value:index}}
+    <li class="commentList">
+        <div class="aui-card-list-header aui-card-list-user" tapmode onclick="openuserinfro('{{= value.commenterId.id }}')">
+            <div class="aui-card-list-user-avatar">
+                <img src="{{= value.commenterId.avatar}}" class="aui-img-round" id="avatar" />
+            </div>
+            <div class="aui-card-list-user-name">
+                <div>{{= value.commenterId.nickname }}</div>
+                <span style="height:20px; width:20px;">
+
+                  </span>
+            </div>
+            <div class="aui-card-list-user-info" id="commenttime">
+                {{=apicloudTimeFormat(value.createdAt,'yyyy-MM-dd hh:mm')}}
+            </div>
+        </div>
+        <div class="aui-card-list-content-padded">
+            <div>
+                {{= value.content }}
+            </div>
+        </div>
+    </li>
+    {{~}}
+</script>
+<script type="text/javascript">
+    var articleId;
+    var authorId;
+    var commenterId;
+    var commentId;
+    var messagecommentId;
+    var newcommentNum;
+    var commentNum;
+    var userInfo = $api.getStorage('local_userInfo');
+    var skipNum = 0;
+    var limitNum = 10;
+    var tag = true;
+    apiready = function() {
+        commentNum = api.pageParam.commentNum;
+        // alert(commentNum);
+        articleId = api.pageParam.id;
+        authorId = api.pageParam.authorId;
+        query2();
+        pullAdd();
+
+        $(".footer_input").focus(function() {
+            // alert("input获取焦点");
+            $("#sendImg").attr('src', '../image/send_orange.png');
+        });
+        $(".footer_input").blur(function() {
+            // alert("input移除焦点");
+            $("#sendImg").attr('src', '../image/send_grey.png');
+        });
+    };
+
+    //上拉加载
+    function pullAdd() {
+        var scroll = new auiScroll({
+            listen: true, //是否监听滚动高度，开启后将实时返回滚动高度
+            distance: 50 //判断到达底部的距离，isToBottom为true
+        }, function(ret) {
+            //		   console.log(JSON.stringify(ret))
+            if (ret.isToBottom == true && tag) {
+                tag = false;
+                query2();
+            }
+        });
+    }
+
+
+    function query2() {
+        var client1 = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model1 = client1.Factory("comment");
+        Model1.query({
+            filter: {
+                "fields": {
+                    "id": true,
+                    "content": true,
+                    "authorId": true,
+                    "articleId": true,
+                    "commenterId": true,
+                    "updatedAt": true,
+                    "createdAt": true,
+                    "commentpraiseNum": true
+                },
+                "include": ["commenterIdPointer", "articleIdPointer"],
+                "order": "createdAt DESC",
+                "limit": limitNum,
+                "where": {
+                    "articleId": articleId
+                }
+            }
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+                // alert(err);
+            } else {
+                if (ret[0] == null) {
+                    document.getElementById('messageempty').innerHTML = '暂时没有评论哦~ 第一个评论是沙发~';
+                } else {
+                    var comment_list = doT.template($('#comment_list').html());
+                    $('#comment').html(comment_list(ret));
+
+                }
+                limitNum = limitNum + limitNum;
+                tag = true;
+
+
+                //   alert(JSON.stringify(ret));
+                //       alert(JSON.stringify(ret[0].updatedAt));
+
+            }
+        })
+    };
+    //发送评论部分
+    function postComment() {
+        var userInfo = $api.getStorage('local_userInfo');
+        var nickName = userInfo.nickname;
+        var commentContant = $("#commentContant").val();
+        commenterId = userInfo.id;
+        if (commentContant == '') {
+            // alert("内容不能为空！");
+            api.toast({
+                msg: '内容不能为空！',
+                duration: 2000,
+                location: 'bottom'
+            })
+            // $("commentContant").focus();
+            // return false;
+        } else {
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("comment");
+            Model.save({
+                "content": commentContant,
+                "commentpraiseNum": 0,
+                "commenterId": commenterId,
+                "articleId": articleId,
+                "authorId": authorId
+                    //  "updateAt":updateAt
+
+            }, function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                    // alert(err);
+                } else {
+                    //处理数据 ret
+
+                    //alert(JSON.stringify(ret));
+                    if ($("#commentContant").val() != '') {
+                        $("#commentContant").val("");
+                    };
+
+                    //alert("发布成功");
+                    //alert(JSON.stringify(ret));
+                    messagecommentId = ret.id;
+                    //alert(messagecommentId);
+                    newcommentNum = parseInt(commentNum) + 1;
+                    // alert(newcommentNum);
+                    commentnum();
+                    message();
+
+                }
+            })
+
+        }
+
+    };
+
+    function message() {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("message");
+        Model.save({
+            "commentId": messagecommentId,
+            "type": 0,
+            "senderId": commenterId,
+            "acceptId": authorId,
+            "articleId": articleId
+
+
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+                // alert(err);
+            } else {
+                //处理数据 ret
+                //alert(JSON.stringify(ret));
+                //刷新页面
+                window.location.reload();
+            }
+        })
+
+    };
+
+
+    function commentnum() {
+        // alert(newcommentNum);
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("article");
+        Model.save({
+            "_id": articleId
+        }, {
+            "commentNum": newcommentNum
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+            } else {
+                //处理数据 ret
+                // alert(newcommentNum);
+            }
+        })
+    }
+
+    function openuserinfro(id) {
+        if (userInfo.id == id) {
+            api.openWin({
+                name: 'lx_personal_page',
+                url: './lx_personal_page.html'
+            });
+        } else {
+            api.openWin({
+                name: 'lx_otherpersonal_page',
+                url: './lx_otherpersonal_page.html',
+                pageParam: {
+                    "id": id
+                }
+            });
+        }
+
+    }
+
+    // //评论点赞部分
+    // function commentPraise(){
+    //   //通过增加id
+    //   var divEle=document.getElementById("like_"+id);
+    //   alert(divEle.innerHTML);
+    //   // // alert(this);
+    //   //通过事件
+    //   var event = event ? event : window.event;
+    //   var obj = event.srcElement ? event.srcElement : event.target;
+    //   alert(obj.innerHTML); //0
+    //   var num = obj.innerHTML;
+    //   // var pra = $api.byId('praise');
+    //   // alert(pra); // object HTMLImageElement
+    //     var now = divEle.getAttribute('src');
+    //     if(now == "../image/praise_grey.png"){
+    //         divEle.setAttribute('src', '../image/praise_orange.png');
+    //       var new_num = Number(num) + 1;
+    //       praise_num.innerText = new_num;
+    //       savePraise(commentId,new_num);
+    //     }
+    // }
+    //
+    // //   else{
+    // //       pra.setAttribute('src', '../image/praise_grey.png');
+    // //       var new_num = Number(num) - 1;
+    // //     praise_num.innerText = new_num;
+    // //     savePraise(commentId,new_num);
+    // //   }
+    // // }
+    // function savePraise(id,commentpraiseNum){
+    //   var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+    //   var Model = client.Factory("comment");
+    //   Model.save(
+    //     {"_id":id},
+    //     {"commentpraiseNum":commentpraiseNum},
+    //     function(ret,err){
+    //       if(err){
+    //           //处理错误 err
+    //       }else{
+    //           //处理数据 ret
+    //       }
+    //   })
+    // }
+</script>
+
+</html>

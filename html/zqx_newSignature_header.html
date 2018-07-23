@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>title</title>
+	<link rel="stylesheet" type="text/css" href="../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	<style>
+		.header {
+			background-color: #ffffff;
+		}
+
+		header a img {
+			height: 1.25rem;
+			width: 1.25rem;
+		}
+
+		.title {
+			color: #707070;
+			font-size: 0.7rem;
+		}
+		
+		#header {
+			height: 70px;
+			padding-top: 25px;
+		}
+	</style>
+
+	<body>
+		<header class="aui-bar aui-bar-nav header" id="header">
+			<a class="aui-pull-left aui-btn" tapmode onclick="api.closeWin()">
+				<img src="../image/arrow_left_grey_small.png" alt="">
+			</a>
+			<div class="aui-title title">个性签名</div>
+			<a class="aui-pull-right aui-btn" tapmode onclick="save()">
+				<img src="../image/complete_grey.png" alt="">
+			</a>
+		</header>
+	</body>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/swiper.js"></script>
+	<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+	<script type="text/javascript" src="../script/doT.js"></script>
+	<script type="text/javascript" src="../script/aui-scroll.js"></script>
+	<script type="text/javascript" src="../script/constant.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			var header = $api.byId('header');
+			var headerH = $api.offset(header).h;
+			$api.fixStatusBar(headerH);
+			api.openFrame({
+				name: 'zqx_newSignature',
+				url: './zqx_newSignature.html',
+				rect: {
+					x: 0,
+					y: headerH,
+					w: 'auto',
+					h: 'auto'
+				},
+				pageParam: {
+					name: 'test'
+				},
+				bounces: false,
+				bgColor: 'rgba(0,0,0,0)',
+				vScrollBarEnabled: true,
+				hScrollBarEnabled: true
+			});
+		};
+
+		function save() {
+			api.sendEvent({
+				name: 'saveAbstract'
+			});
+
+			var jsfun1 = 'reload()';
+			api.execScript({
+				name: 'zqx_personal_set_header',
+				frameName: 'zqx_personal_set',
+				script: jsfun1
+			});
+
+
+			var jsfun = 'saveSucceed()';
+			api.execScript({
+				name: 'zqx_personal_set_header',
+				script: jsfun
+			});
+		}
+	</script>
+
+</html>

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <style>
+        .content {
+            background: #fff;
+            font-size: 0.7rem;
+        }
+
+        .content_item {
+            width: 100%;
+            height: 2.9rem;
+            border-bottom: 0.05rem solid #f2f2f2;
+            line-height: 2.9rem;
+        }
+
+        .content_iten_right {
+            display: block;
+            float: right;
+            padding-right: 1rem;
+            color: #aeaeae;
+        }
+        /*.head {
+            width: 2rem;
+            height: 2rem;
+            float: right;
+            margin: 0.4rem 1rem;
+            border-radius: 100%;
+        }*/
+
+        #avatar {
+            width: 2rem;
+            height: 2rem;
+            float: right;
+            margin: 0.4rem 1rem;
+            border-radius: 100%;
+        }
+
+        .content_item_left {
+            padding-left: 1rem;
+            color: black;
+            float: left;
+        }
+
+        .blank {
+            width: 100%;
+            height: 0.75rem;
+            background: #f2f2f2;
+        }
+
+        .content_item_zhuxiao {
+            color: #ff9933;
+            width: 100%;
+            text-align: center;
+        }
+
+        .abstract {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 50%;
+            float: right;
+        }
+
+        .abstract_topic {
+            float: left;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="blank"></div>
+    <div class="content">
+        <div id="personal_content">
+
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/swiper.js"></script>
+<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+<script type="text/javascript" src="../script/doT.js"></script>
+<script type="text/javascript" src="../script/aui-scroll.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script id="pers" type="text/x-dot-template">
+    {{~it:value:index}}
+    <div class="content_item" tapmode onclick="changeAvatar()">
+        <span class="content_item_left">头像</span>
+        <img id="avatar" src="{{= value.avatar}}" alt="">
+    </div>
+    <div class="content_item" tapmode onclick="openNewNickname()">
+        <span class="content_item_left">昵称</span>
+        <span class="content_iten_right">{{= value.nickname}}</span>
+    </div>
+    <div class="content_item" tapmode onclick="openNewSignature()">
+        <span class="content_item_left abstract_topic">个性签名</span>
+        <span class="content_iten_right abstract">{{= value.abstract}}</span>
+    </div>
+    <div class="content_item" tapmode onclick="gender()">
+        <span class="content_item_left">性别</span>
+        <span class="content_iten_right" id="gender">{{= value.gender}}</span>
+    </div>
+    <div class="content_item" tapmode onclick="openNewBg()">
+        <span class="content_item_left">更换主题背景</span>
+    </div>
+    <div class="content_item" tapmode onclick="openNewPassword()">
+        <span class="content_item_left">修改密码</span>
+    </div>
+    {{~}}
+</script>
+<script type="text/javascript">
+    //获取登录用户的id
+    var local_userId = $api.getStorage('local_userInfo').id;
+    var uiMediaScanner;
+    var imageFilter;
+    //设置最大宽度和高度
+    var mostW = 690;
+    var mostH = 690;
+    var loading;
+    var UILoading;
+    var maskStatus = false;
+    apiready = function() {
+        UILoading = api.require('UILoading');
+        uiMediaScanner = api.require('UIMediaScanner');
+        //实现图片压缩的功能
+        imageFilter = api.require('imageFilter');
+        //doT查询功能
+        query();
+    };
+
+    function openNewNickname() {
+        api.openWin({
+            name: 'zqx_newNickname_header',
+            url: './zqx_newNickname_header.html',
+            pageParam: {
+                name: 'test'
+            }
+        });
+    }
+
+    function openNewPassword() {
+        api.openWin({
+            name: 'zqx_newPassword_header',
+            url: './zqx_newPassword_header.html',
+            pageParam: {
+                name: 'test'
+            }
+        });
+    }
+
+    function openNewSignature() {
+        api.openWin({
+            name: 'zqx_newSignature_header',
+            url: './zqx_newSignature_header.html',
+            pageParam: {
+                name: 'test'
+            }
+        });
+    }
+
+    function query() {
+        var UILoading = api.require('UILoading');
+        UILoading.flower({
+            center: {
+                x: api.winWidth / 2.0,
+                y: api.winHeight / 2.0
+            },
+            size: 45,
+            fixed: true
+        }, function(ret) {
+            //alert(JSON.stringify(ret));
+            loading = ret.id;
+
+        });
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("user");
+        Model.query({
+            filter: {
+                "fields": {
+                    "id": true,
+                    "nickname": true,
+                    "avatar": true,
+                    "abstract": true,
+                    "gender": true
+                },
+                // "include":"authorIdPointer"
+                "where": {
+                    "_id": local_userId
+                }
+            }
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+            } else {
+                //处理数据 ret
+                // alert(JSON.stringify(ret));
+                // alert(JSON.stringify(ret[0].authorId.nickname ) );
+                var pers = doT.template($('#pers').html());
+                $('#personal_content').html(pers(ret));
+                for (var i = 0; i <= loading; i++) {
+                    UILoading.closeFlower({
+                        id: i
+                    });
+                }
+                loading = 0;
+
+                // alert(article_list( ret ))
+            }
+        })
+    }
+
+
+    function Picture(sourceType) {
+        // if (sourceType == 1) { // 拍照
+        //     //获取一张图片
+        //     api.getPicture({
+        //         sourceType: 'camera',
+        //         encodingType: 'png',
+        //         mediaValue: 'pic',
+        //         allowEdit: false,
+        //         quality: 100,
+        //         saveToPhotoAlbum: true
+        //     }, function(ret, err) {
+        //         // 获取拍照数据并处理
+        //         if (ret) {
+        //             var imgSrc = ret.data;
+        //             if (imgSrc != "") {
+        //                 var ele = $api.dom('#avatar');
+        //                 $api.attr(ele, 'src', imgSrc);
+        //                 compress(imgSrc);
+        //             }
+        //         }
+        //     });
+        // } else
+        if (sourceType == 1) { // 从相册中选择
+
+            api.getPicture({
+                sourceType: 'album',
+                encodingType: 'jpg',
+                mediaValue: 'pic',
+                destinationType: 'url',
+                allowEdit: true,
+                quality: 100,
+                saveToPhotoAlbum: false
+            }, function(ret, err) {
+                if (ret) {
+                    //alert(JSON.stringify(ret));
+                    //alert(ret.data);
+                    if (ret.data == "") {
+                        for (var i = 0; i <= loading; i++) {
+                            UILoading.closeFlower({
+                                id: i
+                            });
+                        }
+                        return false;
+                    } else {
+                        var imgSrc = ret.data;
+                        var ele = $api.dom('#avatar');
+                        $api.attr(ele, 'src', imgSrc);
+                        updateFile(imgSrc);
+                    }
+
+                } else {
+                    // alert(JSON.stringify(err));
+                }
+            });
+        }
+    }
+
+    function changeAvatar() {
+        api.actionSheet({
+            title: '上传头像',
+            cancelTitle: '取消',
+            buttons: ['从手机相册选择']
+        }, function(ret, err) {
+            if (ret) {
+                Picture(ret.buttonIndex);
+            }
+        });
+    }
+
+
+    /*
+     * 图片上传
+     */
+    function updateFile(path) {
+        UILoading.flower({
+            center: {
+                x: api.winWidth / 2.0,
+                y: api.winHeight / 2.0
+            },
+            size: 45,
+            mask: 'rgba(0,0,0,0.5)',
+            fixed: true
+        }, function(ret) {
+            //alert(JSON.stringify(ret));
+            loading = ret.id;
+        });
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var File = client.Factory("file");
+        File.save({
+                file: {
+                    isFile: true,
+                    path: path
+                }
+            },
+            function(data, err) {
+                api.hideProgress();
+                if (data) {
+                    saveAvatar(local_userId, data.url);
+                } else {
+                    // alert("上传发生错误：" + "头像" + JSON.stringify(err));
+                }
+            })
+    }
+
+    function saveAvatar(id, avatarUrl) {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("user");
+        Model.save({
+                "_id": id
+            }, {
+                "avatar": avatarUrl
+            },
+            function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                    // alert('失败')
+                } else {
+                    //处理数据 ret
+                    for (var i = 0; i <= loading; i++) {
+                        UILoading.closeFlower({
+                            id: i
+                        });
+                    }
+                    api.toast({
+                        msg: '保存成功',
+                        duration: 2000,
+                        location: 'bottom'
+                    })
+                    $api.setStorage('local_userInfo', ret);
+                    api.sendEvent({
+                        name: 'myUpdateAvatar'
+                    });
+                }
+            })
+    }
+
+    function gender() {
+        api.actionSheet({
+            title: '选择性别',
+            cancelTitle: '取消',
+            buttons: ['男', '女']
+        }, function(ret, err) {
+            if (ret) {
+                // alert(JSON.stringify(ret));
+                var index = ret.buttonIndex;
+                var gender = $("#gender").text();
+
+                if (index == 1) {
+                    gender = "男";
+                    //alert(gender);
+                } else if (index == 2) {
+                    gender = "女";
+                    //alert(gender);
+                }
+                $("#gender").text(gender);
+
+                genderUpdate(gender);
+                //alert(JSON.stringify(ret));
+            } else {
+                // alert(JSON.stringify(err));
+            }
+
+        });
+    }
+
+    function genderUpdate(gender) {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("user");
+        Model.save({
+            "_id": local_userId
+        }, {
+            "gender": gender
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+
+            } else {
+                //处理数据 ret
+                $api.setStorage('local_userInfo', ret);
+                api.sendEvent({
+                    name: 'myUpdateAvatar'
+                });
+            }
+        })
+    }
+
+    function openNewBg() {
+        api.actionSheet({
+            title: '更换主题背景',
+            cancelTitle: '取消',
+            buttons: ['从手机相册选择']
+        }, function(ret, err) {
+            if (ret) {
+                fnNewBg(ret.buttonIndex);
+            }
+        });
+    }
+
+    function fnNewBg(sourceType) {
+        if (sourceType == 1) {
+            // 从相册中获取
+            api.getPicture({
+                sourceType: 'album',
+                encodingType: 'jpg',
+                mediaValue: 'pic',
+                destinationType: 'url',
+                allowEdit: true,
+                quality: 100,
+                saveToPhotoAlbum: false
+            }, function(ret, err) {
+                if (ret) {
+                    if (ret.data == "") {
+                        for (var i = 0; i <= loading; i++) {
+                            UILoading.closeFlower({
+                                id: i
+                            });
+                        }
+                        return false;
+                    }else {
+                        var imgSrc = ret.data;
+                        updateUser(imgSrc);
+                    }
+                } else {
+                    // alert(JSON.stringify(err));
+                }
+            });
+        }
+    }
+
+    function updateUser(path) {
+        UILoading.flower({
+            center: {
+                x: api.winWidth / 2.0,
+                y: api.winHeight / 2.0
+            },
+            size: 45,
+            mask: 'rgba(0,0,0,0.5)',
+            fixed: true
+        }, function(ret) {
+            //alert(JSON.stringify(ret));
+            loading = ret.id;
+        });
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var File = client.Factory("file");
+        File.save({
+                file: {
+                    isFile: true,
+                    path: path
+                }
+            },
+            function(data, err) {
+                api.hideProgress();
+                if (data) {
+                    // alert("上传结果：" + JSON.stringify(data));
+                    //alert(local_userId)
+                    //alert(data.url)
+                    saveBackground(local_userId, data.url);
+                } else {
+                    // alert("上传发生错误：" + JSON.stringify(err));
+                }
+            })
+    }
+
+    function saveBackground(id, background) {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("user");
+        Model.save({
+                "_id": id
+            }, {
+                "background": background
+            },
+            function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                    // alert('失败')
+                } else {
+                    //处理数据 ret
+                    for (var i = 0; i <= loading; i++) {
+                        UILoading.closeFlower({
+                            id: i
+                        });
+                    }
+                    api.toast({
+                        msg: '保存成功',
+                        duration: 2000,
+                        location: 'bottom'
+                    })
+                    $api.setStorage('local_userInfo', ret);
+                    api.sendEvent({
+                        name: 'myUpdateAvatar'
+                    });
+                    // api.imageCache({
+                    //     url: ret.background,
+                    //     thumbnail: false
+                    // }, function(ret, err) {
+                    //     var url = ret.url;
+                    //     $api.setStorage('local_bg', url);
+                    // });
+
+
+                }
+            })
+    }
+
+    function reload() {
+        //alert("aaaa");
+        window.location.reload();
+    }
+</script>
+
+</html>

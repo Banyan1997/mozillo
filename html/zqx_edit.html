@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>title</title>
+	<link rel="stylesheet" type="text/css" href="../css/api.css" />
+	<link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	<style>
+		html,
+		body {
+			height: 100%;
+			width: 100%;
+			background-color: #fafafa;
+		}
+		/*.wrap {
+			height: 100%;
+			width: 100%;
+			font-size: 0;
+			background-color: #ffffff;
+		}*/
+
+		.title_box {
+			height: 2.9rem;
+			width: 100%;
+			padding-left: 0.5rem;
+			padding-right: 0.5rem;
+		}
+
+		.title_box .title {
+			height: 2.9rem;
+			width: 100%;
+			font-size: 0.8rem;
+			color: #aeaeae;
+			background-color: #ffffff;
+		}
+
+		.line {
+			height: 0.05rem;
+			width: 100%;
+			border: 0.05rem dashed #aeaeae;
+		}
+
+		.textarea_box {
+			padding: 0 0.5rem 0 0.5rem;
+			height: 8rem;
+			/*border: 1px solid red;*/
+		}
+
+		.textarea_box .article {
+			width: 100%;
+			height: auto;
+			font-size: 0.7rem;
+			color: #333333;
+			background-color: #ffffff;
+			line-height: 1.2rem;
+			margin-top: 0.5rem;
+			overflow-y: visible;
+			margin-bottom: 0.5rem;
+			height: 10rem;
+		}
+
+		.blank {
+			height: 2.2rem;
+			width: 100%;
+			background-color: #ffffff;
+		}
+
+		.bottom_tools {
+			position: fixed;
+			height: 2.2rem;
+			width: 100%;
+			bottom: 0;
+			left: 0;
+			/*background-color: #fafafa;*/
+		}
+
+		.tool_box {
+			display: inline-block;
+			height: 2.2rem;
+			width: 20%;
+			border: none;
+		}
+
+		.tool {
+			height: 1rem;
+			width: 1rem;
+			margin: 0.55rem auto;
+		}
+
+		.add_img {
+			width: 5rem;
+			height: 5rem;
+			border: 0.05rem dashed #cdcdcd;
+			border-radius: 0.5rem;
+			margin: 2.5rem 0 0 1rem;
+			float: left;
+		}
+
+		.add_item {
+			float: left;
+		}
+
+		.jiahao {
+			width: 2rem;
+			height: 2rem;
+			margin: 1.5rem;
+		}
+
+
+	</style>
+
+	<body>
+
+		<!-- <div class="wrap"> -->
+		<div class="title_box">
+			<input type="text" name="title" class="title" id="title" placeholder="请输入标题">
+			<div class="line"></div>
+		</div>
+		<div class="aui-list-item-inner">
+			<div class="aui-list-item-input textarea_box">
+				<textarea placeholder="请输入正文" class="article" id="content"></textarea>
+			</div>
+		</div>
+		<div class="pic" id="pic">
+			<div class="add_img" id="add_img" tapmode onclick="OpenFnPic()">
+				<span class="jiahao"><img src="../image/add_grey.png" alt="" ></span>
+			</div>
+		</div>
+
+		<div class="bottom_tools" id="toolbox">
+			<!-- <div class="tool_box">
+        		<img src="../image/a.png" alt="" class="tool">
+        	</div>
+        	<div class="tool_box">
+        		<img src="../image/pict_grey.png" alt="" class="tool">
+        	</div>
+        	<div class="tool_box">
+        		<img src="../image/more_grey.png" alt="" class="tool">
+        	</div>
+        	<div class="tool_box">
+        		<img src="../image/at.png" alt="" class="tool">
+        	</div>
+        	<div class="tool_box">
+        		<img src="../image/put_grey.png" alt="" class="tool">
+        	</div> -->
+		</div>
+		<!-- </div> -->
+	</body>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+	<script type="text/javascript" src="../script/doT.js"></script>
+	<script type="text/javascript" src="../script/aui-scroll.js"></script>
+	<script type="text/javascript" src="../script/constant.js"></script>
+	<script type="text/javascript">
+		var ableCilck = true;
+		var loading;
+    	var UILoading;
+		apiready = function() {
+			// var toolbox = $api.byId("toolbox");
+			// var textarea = $api.byId("textarea");
+			// var toolbox_t = $api.offset(toolbox).t;
+			// var textarea_t = $api.offset(textarea).t;
+			// var height =  toolbox_t - textarea_t;
+			// $('#textarea').css("height", height);
+			// $('#loading').hide();
+			//接收监听事件
+        	UILoading = api.require('UILoading');
+
+			api.addEventListener({
+				name: 'add_article'
+			}, function(ret, err) {
+				add_article();
+			});
+
+		}
+
+		var delayRefresh = true;
+		var pic = new Array();
+		var j = 0;
+		var userInfo = $api.getStorage('local_userInfo');
+		var userId = userInfo.id;
+		var nickName = userInfo.nickname;
+
+
+		function OpenFnPic() {
+			api.actionSheet({
+				title: '上传图片',
+				cancelTitle: '取消',
+				buttons: ['拍照', '从手机相册选择']
+			}, function(ret, err) {
+				if (ret) {
+					getPicture(ret.buttonIndex);
+				}
+			});
+		}
+
+
+		function getPicture(sourceType) {
+			if (sourceType == 1) { // 拍照
+				api.getPicture({
+					sourceType: 'camera',
+					encodingType: 'png',
+					mediaValue: 'pic',
+					allowEdit: true,
+					destinationType: 'base64',
+					quality: 100,
+					saveToPhotoAlbum: true
+				}, function(ret, err) {
+					if (ret) { //拍照成功后执行
+						var Src = ret.data;
+						if (Src == '') {
+							return;
+						}
+						$("#pic").append('<img src = "' + Src + '" class = "add_img" id="add_img">');
+						updateFile(ret.data, ret.filename);
+
+					} else {
+						console.log(JSON.stringify(err));
+						api.toast({
+							msg: '选择图片出错',
+							duration: 500,
+							location: 'middle'
+						});
+
+					}
+				});
+			} else if (sourceType == 2) { // 从相册中选择
+
+				var UIMediaScanner = api.require('UIMediaScanner');
+				UIMediaScanner.open({
+					type: 'picture',
+					column: 4,
+					classify: true,
+					max: 9,
+					sort: {
+						key: 'time',
+						order: 'desc'
+					},
+					texts: {
+						stateText: '已选择*项',
+						cancelText: '取消',
+						finishText: '完成'
+					},
+					styles: {
+						bg: '#fff',
+						mark: {
+							icon: '',
+							position: 'bottom_left',
+							size: 20
+						},
+						nav: {
+							bg: '#eee',
+							stateColor: '#000',
+							stateSize: 18,
+							cancelBg: 'rgba(0,0,0,0)',
+							cancelColor: '#000',
+							cancelSize: 18,
+							finishBg: 'rgba(0,0,0,0)',
+							finishColor: '#000',
+							finishSize: 18
+						}
+					},
+					scrollToBottom: {
+						intervalTime: 3,
+						anim: true
+					},
+					exchange: true,
+					rotation: true
+				}, function(ret) {
+					if (ret) {
+						// alert(JSON.stringify(ret));
+						if (ret.eventType == "cancel") {
+							return false;
+						} else if (ret.list.length > 0) {
+							for (var i = 0; i < ret.list.length; i++) {
+								var imgSrc = ret.list[i].path;
+								var ele = $api.dom('#pic');
+								//  $api.append(ele,'<img src = "../image/000.jpg" class = "add_img">');
+								$api.append(ele, '<img src = "' + imgSrc + '" class = "add_img">');
+								// $("#pic").append('<img src = "' + imgSrc + '" class = "add_img">');
+								updateFile(ret.list[i].path, ret.list[i].filename);
+							}
+						}
+					}
+				});
+			}
+		}
+
+		function updateFile(path, filename) {
+			UILoading.flower({
+	            center: {
+	                x: api.winWidth / 2.0,
+	                y: api.winHeight / 2.0
+	            },
+	            size: 45,
+	            mask: 'rgba(0,0,0,0.5)',
+	            fixed: true
+	        }, function(ret) {
+	            //alert(JSON.stringify(ret));
+	            loading = ret.id;
+	        });
+			var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+			var File = client.Factory("file");
+			File.save({
+					file: {
+						isFile: true,
+						path: path,
+						values: {
+							filename: filename
+						}
+					}
+				},
+				function(data, err) {
+					api.hideProgress();
+					if (data) {
+						// alert("上传结果：" + JSON.stringify(data));
+						pic[j] = data.url;
+						j++;
+						// alert(pic);
+						for (var i = 0; i <= loading; i++) {
+	                        UILoading.closeFlower({
+	                            id: i
+	                        });
+	                    }
+					} else {
+						// alert("上传发生错误：" + JSON.stringify(err));
+						api.toast({
+							msg: '上传失败！检查一下网络问题哦',
+							duration: 2000,
+							location: 'bottom'
+						});
+						for (var i = 0; i <= loading; i++) {
+	                        UILoading.closeFlower({
+	                            id: i
+	                        });
+	                    }
+					}
+				})
+		}
+
+		//添加文章和标题数据库连接
+		function add_article() {
+			var title = $("#title").val();
+			// alert(title.length);
+			var content = $("#content").val();
+			if (title == 0) {
+				api.toast({
+					msg: '请输入标题',
+					duration: 2000,
+					location: 'middle'
+				});
+				// alert("请输入标题");
+				return false;
+			} else if (title.length > 30) {
+				// alert("标题控制在25字以内");
+				api.toast({
+					msg: '标题控制在30字以内',
+					duration: 2000,
+					location: 'middle'
+				});
+				return false;
+
+			}
+
+
+			if (content == 0) {
+				// alert("请输入内容");
+				api.toast({
+					msg: '请输入内容',
+					duration: 2000,
+					location: 'bottom'
+				});
+				return false;
+			}
+
+			if (pic == "") {
+				// alert("请至少添加一张图片");
+				api.toast({
+					msg: '请至少添加一张图片',
+					duration: 2000,
+					location: 'bottom'
+				});
+				return false;
+			}
+
+			if(ableCilck) {
+				ableCilck = false;
+				var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+				var Model = client.Factory("article");
+				Model.save({
+					"title": title,
+					"content": content,
+					"pictureArray": pic,
+					"commentNum": 0,
+					"praiseNum": 0,
+					"collectionNum": 0,
+					"authorId": userId,
+					"creatorName": nickName,
+					"type":0
+				}, function(ret, err) {
+					if (err) {
+						//处理错误 err
+						// alert("发布失败");
+						api.toast({
+							msg: '发布失败！检查一下网络问题哦',
+							duration: 2000,
+							location: 'bottom'
+						});
+						// setTimeout("ableCilck = true", 1000)
+					} else {
+						//处理数据 ret
+
+						success();
+						// setTimeout("ableCilck = true", 1000)
+						window.setTimeout(close, 1000);
+					}
+				})
+			}
+
+		}
+
+		function close() {
+			api.closeWin({});
+
+		}
+
+		function success() {
+			api.toast({
+				msg: '亲,您的文章已经发布成功了哦~',
+				duration: 1000,
+				location: 'middle'
+			})
+		}
+	</script>
+
+</html>

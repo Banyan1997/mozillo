@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css">
+    <style>
+        html {
+            background: #fff;
+        }
+
+        .clear {
+            clear: both;
+            overflow: hidden;
+        }
+
+        .top {
+            width: 100%;
+            height: 2.5rem;
+            background-color: #ff9933;
+            clear: both;
+        }
+
+        .search {
+            border-radius: 0.5rem;
+            margin: 0.55rem auto;
+            width: 96%;
+            background-color: #fafafa;
+            height: 1.5rem;
+        }
+
+        .left_pic {
+            background-image: url(../image/arrow_left_orange_small.png);
+            float: left;
+            width: 1.4rem;
+            height: 1.4rem;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 70%;
+            /*margin: 0.25rem 0.5rem;*/
+            margin-left: 0.2rem;
+        }
+
+        .searchinpput {
+            width: 78%;
+            background-color: #fafafa;
+            font-size: 0.6rem;
+            float: left;
+            margin-top: 0.3rem;
+        }
+
+        .right_pic {
+            background-image: url(../image/search_orange.png);
+            float: right;
+            /*margin: 0.25rem 0.5rem;*/
+            background-size: 70%;
+            width: 1.4rem;
+            height: 1.4rem;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin-right: 0.3rem;
+        }
+
+        .content {
+            width: 100%;
+            height: auto;
+            background: #fff;
+        }
+
+        .content_item {
+            width: 100%;
+            clear: both;
+        }
+
+        .content_item_top {
+            width: 100%;
+            font-size: 0.8rem;
+            font-weight: bold;
+            padding: 0.8rem 0.75rem 0;
+        }
+
+        .content_item_center {
+            margin: 0.8rem;
+        }
+
+        .content_item_word {
+            width: auto;
+            height: 1.2rem;
+            font-size: 0.8rem;
+            line-height: 1.2rem;
+            color: #707070;
+            border-radius: 1.2rem;
+            padding: 0 1rem;
+            background: #f2f2f2;
+            float: left;
+            margin-right: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .blank {
+            width: 100%;
+            height: 0.05rem;
+            border: 1px solid #707070;
+        }
+
+        .aui-list-item-title {
+            color: #ff9933 !important;
+        }
+
+        .swiper-container {
+            /*width: 100%;
+          height: 100%;*/
+            height: 10rem;
+            width: auto;
+            clear: none;
+        }
+
+        .swiper-slide img {
+            height: 10rem;
+            width: auto;
+        }
+
+        .swiper-slide {
+            text-align: center;
+            font-size: 0.9rem;
+            background: #fff;
+            /* Center slide text vertically */
+            /*display: -webkit-box;
+          display: -ms-flexbox;
+          display: -webkit-flex;
+          display: flex;
+          -webkit-box-pack: center;
+          -ms-flex-pack: center;
+          -webkit-justify-content: center;
+          justify-content: center;
+          -webkit-box-align: center;
+          -ms-flex-align: center;
+          -webkit-align-items: center;
+          align-items: center;*/
+        }
+
+        .info_icon img {
+            height: 1rem;
+            width: 1rem;
+            margin-left: 1rem;
+            margin-right: 0.5rem;
+        }
+
+        .text_pic {
+            float: left!important;
+            height: 2.5rem;
+            width: 4rem;
+            margin-right: 0.5rem;
+        }
+
+        .title {
+            float: left!important;
+            height: 2.5rem;
+            width: 11rem!important;
+        }
+
+        .inner {
+            clear: both;
+        }
+
+        #picture {
+            height: 2.5rem;
+            width: 4rem;
+        }
+
+        .avatar {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .aui-list-item-inner {
+            padding-bottom: 0px!important;
+        }
+
+        #picture {
+            margin-top: 0.1rem;
+            height: 2.8rem;
+            width: 5.2rem;
+        }
+
+        .smallPic {
+            height: 2.8rem;
+            width: 5.2rem;
+        }
+
+        #content2 {
+            height: 3rem;
+            line-height: 1rem;
+
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+        }
+
+        #title {
+            margin-top: -0.15rem;
+            margin-bottom: 0.15rem;
+        }
+
+        /*.empty {
+            margin-top: 5rem;
+
+            font-size: 0.9rem;
+
+            line-height: 100%;
+            height: 100%;
+            background-color: #ffffff;
+        }*/
+
+        .empty_text {
+            margin-top: 5rem;
+
+            background-color: #fff;
+            margin: 0 auto;
+        }
+        .empty {
+            color: #ff9933;
+            background-color: #fff;
+            text-align: center;
+        }
+
+        #header {
+            height: 70px;
+            padding-top: 25px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="top clear" id="header">
+        <div class="search">
+            <div class="left_pic" tapmode onclick="fnClose()"></div>
+            <input class="searchinpput" name="" value="" placeholder="点我搜索好点子" id="searchinpput" >
+            <div class="right_pic" tapmode onclick="showArticleList();"></div>
+        </div>
+
+    </header>
+    <div class="empty" id="empty">
+    </div>
+    <!-- <div class="content">
+        <div class="content_item">
+            <div class="content_item_top">综合</div>
+            <div class="content_item_center">
+                <div class="content_item_word" style="background-color:#ff9966;color:#fff;">相机</div>
+                <div class="content_item_word">旅行</div>
+                <div class="content_item_word">绝地求生</div>
+                <div class="content_item_word">外卖</div>
+                <div class="content_item_word">HTML/CSS/JS</div>
+            </div>
+
+        </div>
+        <div class="content_item">
+            <div class="content_item_top">热门</div>
+            <div class="content_item_center">
+                <div class="content_item_word" style="background-color:#ff9966;color:#fff;">相机</div>
+
+                <div class="content_item_word">旅行</div>
+                <div class="content_item_word">绝地求生</div>
+                <div class="content_item_word">外卖</div>
+                <div class="content_item_word">HTML/CSS/JS</div>
+            </div>
+        </div>
+    </div> -->
+    <ul class="aui-list aui-media-list" id="article">
+
+    </ul>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/swiper.js"></script>
+<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+<script type="text/javascript" src="../script/doT.js"></script>
+<script type="text/javascript" src="../script/time.js"></script>
+<script type="text/javascript" src="../script/aui-scroll.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script id="article_list" type="text/x-dot-template">
+    {{~it:value:index}}
+    <li class="aui-list-item">
+        <div class="aui-media-list-item-inner">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-text" tapmode onclick="detail('{{= value.id }}','{{= value.authorId.id }}');">
+                    <div id="title" class="aui-list-item-title">
+                        <div>
+                            {{= value.title }}
+                        </div>
+                    </div>
+                    <!-- <span style="height:15px; width:15px;"><img src="../image/arrow_down_grey.png" /></span> -->
+                </div>
+                <div id="picture" class="text_pic" tapmode onclick="detail('{{= value.id }}','{{= value.authorId.id }}');">
+                    <div class="main_img">
+                        <img class="smallPic" src="{{= value.pictureArray[0] }}">
+                    </div>
+                </div>
+                <div id="content" class="aui-list-item-text" tapmode onclick="detail('{{= value.id }}','{{= value.authorId.id }}');">
+                    <div id="content2">
+                        {{= value.content }}
+                    </div>
+                </div>
+                <div class="aui-info aui-margin-t-5">
+                    <div class="aui-info-item" tapmode onclick="person('{{= value.authorId.id }}');">
+                        <img src="{{= value.authorId.avatar}}" class="aui-img-round avatar" /><span class="aui-margin-l-5">{{= value.authorId.nickname}}</span>
+                    </div>
+                    <div class="info_icon">
+                        <img src="../image/praise_grey.png">{{= value.praiseNum}}
+                        <!-- <img src="../image/ask_grey.png">
+                            <img src="../image/collect_grey.png"> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+    {{~}}
+</script>
+<script id="messageempty" type="text/x-dot-template">
+    {{~it:value:index}}
+    <div class="empty" id="empty">
+      暂时没有消息哦~
+    </div>
+    {{~}}
+</script>
+<script type="text/javascript">
+    var local_userInfo = $api.getStorage('local_userInfo');
+    var loading;
+    apiready = function() {
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err) {
+            //  alert("退出")
+            api.closeWin();
+        });
+
+    };
+
+    function showArticleList() {
+        //window.location.reload();
+        var str = $('#searchinpput').val();
+        if(str == ''){
+            api.toast({
+                msg: '输入的搜索内容不能为空~',
+                duration: 2500,
+                location: 'bottom'
+            })
+            return false;
+        }else {
+            var UILoading = api.require('UILoading');
+            UILoading.flower({
+                center: {
+                    x: api.winWidth / 2.0,
+                    y: api.winHeight / 2.0
+                },
+                size: 45,
+                fixed: true
+            }, function(ret) {
+                //alert(JSON.stringify(ret));
+                loading = ret.id;
+
+            });
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("article");
+            Model.query({
+                "filter": {
+                    "fields": {
+                        "pictureArray": true,
+                        "id": true,
+                        "title": true,
+                        "content": true,
+                        "picture": true,
+                        "authorId": true,
+                        "praiseNum": true,
+                        "pictureArray": true
+                    }, //或者["id","make","model"]
+                    "where": {
+                        "title": {
+                            "like": ".*" + str + ".*"
+                        } //表示查询以“马”开头的所有记录
+                    },
+                    "include": "authorIdPointer",
+                    "order": "viewNum DESC"
+                }
+            }, function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                } else {
+
+                    if(ret[0] == null){
+                         var article_list = doT.template($('#article_list').html());
+                         $('#article').html(article_list(ret));
+                        // //alert(1);
+                         $("#empty").empty();
+                        //     $("#empty").append("<div class='empty_text'>暂时没有搜索内容哦~</div>");
+                        for(var i = 0; i <= loading; i++){
+                            UILoading.closeFlower({
+                                id: i
+                            });
+                        }
+                        api.toast({
+                            msg: '暂时没有搜索内容哦~',
+                            duration: 2500,
+                            location: 'bottom'
+                        })
+                    }else {
+                        //$("#empty").remove();
+                        $("#empty").empty();
+                        var article_list = doT.template($('#article_list').html());
+                        $('#article').html(article_list(ret));
+                        for(var i = 0; i <= loading; i++){
+                            UILoading.closeFlower({
+                                id: i
+                            });
+                        }
+                    }
+
+                }
+            })
+        }
+
+    }
+
+    function detail(id, authorId) {
+        if(local_userInfo.id == authorId){
+            api.openWin({
+                name: 'home_detail_personnal_header',
+                url: './home_detail_personnal_header.html',
+                pageParam: {
+                    'id': id,
+                    'authorId': authorId
+
+                }
+            });
+        }else {
+            api.openWin({
+                name: 'home_detail_header',
+                url: './home_detail_header.html',
+                pageParam: {
+                    'id': id,
+                    'authorId': authorId
+
+                }
+            });
+        }
+
+    };
+
+    function person(id) {
+        if(id == local_userInfo.id){
+            api.openWin({
+                name: 'lx_personal_page',
+                url: './lx_personal_page.html',
+                pageParam: {
+                    name: 'test'
+                }
+            });
+        }else {
+            api.openWin({
+                name: 'lx_otherpersonal_page',
+                url: './lx_otherpersonal_page.html',
+                pageParam: {
+                    id: id
+                }
+            });
+        }
+
+    };
+
+    function fnClose() {
+        api.closeWin({});
+    }
+</script>
+
+</html>

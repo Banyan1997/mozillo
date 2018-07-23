@@ -1,0 +1,49 @@
+  <!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="css/api.css" />
+    <link rel="stylesheet" type="text/css" href="css/aui.css" />
+    <style>
+  	</style>
+  </head>
+
+  <body>
+
+  </body>
+  <script type="text/javascript" src="script/aui-tab.js"></script>
+  <script type="text/javascript" src="script/api.js"></script>
+  <script type="text/javascript" src="script/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript">
+
+
+  	apiready = function() {
+      var intro_ist = $api.getStorage('introt');
+         if (intro_ist) {
+          api.openWin({
+              name: 'zqx_log_header',
+              url: './html/zqx_log_header.html',
+              pageParam: {
+                  name: 'test1'
+              }
+          });
+        }else {
+          api.openWin({
+             name: 'guidepages.html',
+             url: './html/guidepages.html',
+             pageParam: {
+                 name: 'test'
+             }
+         });
+    } ;
+
+  	};
+
+
+
+  </script>
+  </html>

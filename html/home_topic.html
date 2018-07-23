@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css">
+    <style>
+        html {
+            background-color: #EAEEEF!important;
+        }
+
+        #add {
+            background-color: #ff9933;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            -moz-border-radius: 50%;
+            -webkit-border-radius: 50%;
+            position: fixed;
+            top: 80%;
+            left: 75%;
+            box-shadow: 1px 1px 1px #888888;
+        }
+
+        #add img {
+            height: 1.8rem;
+            width: 1.8rem;
+            position: relative;
+            left: 0.6rem;
+            top: 0.6rem;
+        }
+
+        .aui-card-list-header {
+            color: #ff9933;
+        }
+
+        .main {
+            background-color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .main img {
+            width: 100%;
+            height: 12.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .main .brief {
+            padding-left: 10%;
+            padding-right: 10%;
+        }
+
+        .brief span {
+            font-size: 0.7rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .brief .title {
+            color: #ff9933;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <div id="add" tapmode onclick="addnew();">
+        <img src="../image/add.png">
+    </div> -->
+    <div id="topic"></div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="tdext/javascript" src="../script/swiper.js"></script>
+<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+<script type="text/javascript" src="../script/doT.js"></script>
+<script type="text/javascript" src="../script/aui-scroll.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script id="topic_list" type="text/x-dot-template">
+      {{~it:value:index}}
+        <div class="main" onclick="detail('{{= value.id }}');">
+            <img src="{{= value.topicPic }}">
+            <div class="brief">
+                <span class="title">{{= value.topicTitle }}</span>
+                <span>{{= value.topicContent }}</span>
+            </div>
+        </div>
+      {{~}}
+</script>
+<script type="text/javascript">
+    apiready = function() {
+        query();
+        // 下拉刷新
+        // api.setRefreshHeaderInfo({
+        //     loadingImg: 'widget://image/refresh.png',
+        //     bgColor: '#fff',
+        //     textColor: '#ff9933',
+        //     textDown: '下拉刷新...',
+        //     textUp: '松开刷新...'
+        // }, function(ret, err) {
+        //     api.refreshHeaderLoadDone()
+        //         //在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+        // });
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#fff',
+            images: [
+                'widget://image/refresh/pic1.png',
+                'widget://image/refresh/pic2.png',
+                'widget://image/refresh/pic3.png',
+                'widget://image/refresh/pic4.png',
+                'widget://image/refresh/pic5.png',
+                'widget://image/refresh/pic6.png',
+                'widget://image/refresh/pic7.png',
+                'widget://image/refresh/pic8.png'
+            ],
+            tips: {
+                pull: '下拉刷新',
+                threshold: '松开立即刷新',
+                load: '正在刷新'
+            }
+        }, function() {
+                refreshQuery();
+        });
+    };
+
+    function query(){
+        var UILoading = api.require('UILoading');
+        UILoading.flower({
+            center: {
+                x: api.winWidth/2.0,
+                y: api.winHeight/2.0
+            },
+            size: 45,
+            fixed: true
+        }, function(ret) {
+            //alert(JSON.stringify(ret));
+        });
+      var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+      var Model = client.Factory("topic");
+      Model.query({
+          filter: {
+              "fields": {
+                  "id": true,
+                  "topicTitle": true,
+                  "topicContent": true,
+                  "topicPic": true,
+              }
+          }
+      }, function(ret, err) {
+          if (err) {
+              //处理错误 err
+              // alert("err");
+          } else {
+              //处理数据 ret
+              // alert(JSON.stringify(ret));
+              //查找所有ret.id
+              // for (var i=0;i<ret.length;i++){
+              //   alert(JSON.stringify(ret[i].id));
+              // }
+
+              var topic_list = doT.template($('#topic_list').html());
+              $('#topic').html(topic_list(ret));
+              UILoading.closeFlower({
+                  id: 0
+              });
+          }
+      })
+    };
+
+    function refreshQuery() {
+      var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+      var Model = client.Factory("topic");
+      Model.query({
+          filter: {
+              "fields": {
+                  "id": true,
+                  "topicTitle": true,
+                  "topicContent": true,
+                  "topicPic": true,
+              }
+          }
+      }, function(ret, err) {
+          if (err) {
+              //处理错误 err
+              // alert("err");
+          } else {
+              var topic_list = doT.template($('#topic_list').html());
+              $('#topic').html(topic_list(ret));
+              api.refreshHeaderLoadDone()
+          }
+      })
+    }
+
+
+    function detail(id) {
+      // 使用openFrame打开话题详细页，因为它没有子frame就不算是window
+        api.openWin({
+            name: 'detail',
+            url: './home_topicDetail.html',
+            pageParam: {
+                'id':id
+            }
+        });
+
+    };
+
+
+    function addnew() {
+        api.openWin({
+            name: 'zqx_edit_header',
+            url: './zqx_edit_header.html',
+            pageParam: {
+                name: 'test'
+            }
+        });
+    };
+</script>
+
+</html>

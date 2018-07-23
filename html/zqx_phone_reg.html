@@ -1,0 +1,407 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css">
+    <style>
+
+        html,body {
+            height: 100%;
+            width: 100%;
+            background-color: #fafafa;
+        }
+
+        /*.wrap {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            bottom: 0;
+            background-color: #fafafa;
+        }*/
+
+        .top_blank {
+            height: 1rem;
+            width: 100%;
+        }
+
+        .input_box {
+            height: 3.4rem;
+            width: 100%;
+        }
+
+        .input_box .input_icon_box {
+            height: 3.4rem;
+            width: 1.25rem;
+            display: inline-block;
+            float: left;
+            margin-left: 0.5rem;
+        }
+
+        .input_icon {
+            height: 1.25rem;
+            width: 1.25rem;
+            margin-top: 1.05rem;
+        }
+
+        .input_box .input_text {
+            height: 3.3rem;
+            width: 7.5rem;
+            border: none;
+            background-color: #fafafa;
+            float: left;
+            margin-left: 1rem;
+            margin-right: -5.5rem;
+            font-size: 0.7rem;
+        }
+
+        .line_box {
+            width: 100%;
+            height: 0.05rem;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        .line {
+            height: 0.05rem;
+            width: 100%;
+            background-color: #d7d7d7;
+        }
+
+        .code {
+            height: 1.5rem;
+            width: 5.5rem;
+            background-color: #66cc66;
+            float: right;
+            margin: 1.05rem 0.5rem 0 0;
+            border-radius: 0.75rem;
+            text-align: center;
+            line-height: 1.5rem;
+            font-size: 0.7rem;
+            color: #ffffff;
+        }
+
+        .btn_log {
+            height: 2rem;
+            width: 9rem;
+            background-color: #ff9933;
+            margin: 1.5rem auto 0;
+            border-radius: 1rem;
+            text-align: center;
+            line-height: 2rem;
+            border-radius: 700;
+            font-size: 0.7rem;
+            color: #ffffff;
+        }
+
+        .btn_log:active {
+            background-color: #aeaeae;
+        }
+
+        .middle_blank {
+            height: 2rem;
+            width: 100%;
+        }
+
+        .regist {
+            text-align: center;
+            font-size: 0.6rem;
+            color: #aeaeae;
+            margin-top: 1rem;
+        }
+
+        #tips {
+            height: 35px;
+            width: 100%;
+            background-color: #fafafa;
+            color: #ff9933;
+            text-align: center;
+            line-height: 35px;
+            font-size: 14px;
+        }
+
+        .registeritem {
+            margin-top: 1.0rem;
+            text-align: center;
+        }
+
+        .register_agree {
+            font-size: 0.6rem;
+            color:#a1a1a1;
+        }
+
+        .register_item {
+            font-size: 0.7rem;
+            color:#282828;
+        }
+    </style>
+
+    <body>
+        <!-- <div class="wrap"> -->
+            <div class="top_blank"></div>
+            <div class="input_box">
+                <div class="input_icon_box">
+                    <img src="../image/store_orange.png" alt="" class="input_icon">
+                </div>
+                <input id="username" type="text" name="" class="input_text" placeholder="请输入手机号码">
+            </div>
+            <div class="line_box">
+                <div class="line"></div>
+            </div>
+            <div class="input_box">
+                <div class="input_icon_box">
+                    <img src="../image/specialist_orange.png" alt="" class="input_icon">
+                </div>
+                <input id="password" type="password" name="" class="input_text" placeholder="请输入密码">
+            </div>
+            <div class="line_box">
+                <div class="line"></div>
+            </div>
+            <div class="input_box">
+                <div class="input_icon_box">
+                    <img src="../image/going_orange.png" alt="" class="input_icon">
+                </div>
+                <input id="verifyCode" type="text" name="" class="input_text" placeholder="请输入验证码">
+                <div id="getMes" class="code" onclick="getMessage()">
+                    <span id="countDown">获取验证码</span>
+                </div>
+            </div>
+            <div class="line_box">
+                <div class="line"></div>
+            </div>
+            <div id="tips">
+
+            </div>
+            <div class="btn_log" tapmode onclick="reg()">
+                <span>注册</span>
+            </div>
+            <div class="registeritem" tapmode onclick="openitem();">
+                <span class="register_agree">注册即表示同意</span>
+                <span class="register_item">《谋之服务协议及声明》</span>
+            </div>
+            <!-- <div class="middle_blank">
+                <p class="regist" tapmode onclick="openMailReg()">使用邮箱注册</p>
+            </div> -->
+        <!-- </div> -->
+    </body>
+    <script type="text/javascript" src="../script/api.js"></script>
+    <script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+    <script type="text/javascript" src="../script/constant.js"></script>
+    <script type="text/javascript">
+        var username;
+        var password;
+        var verifyCode;
+        var messageCode;
+        var existUser = false;
+        var tips = $("#tips")
+        var count = $('#countDown');
+        var getCode = $('#getMes');
+        var interval;
+        var index = 30;
+        apiready = function() {
+            smsregister(); //实现手机短信功能必须先调用这个方法
+        }
+
+        function countDown() {
+            index--;
+            count.text(index + 's后重新获取');
+            getCode.removeAttr("onclick");
+            if(index == 0) {
+                window.clearTimeout(interval);
+                index = 30;
+                count.text('获取验证码');
+                getCode.attr("onclick", "getMessage()")
+            }
+        }
+
+        function reg() {
+            //获取控件值
+            username = $("#username").val();
+            password = $("#password").val();
+            verifyCode = $("#verifyCode").val();
+            checkPhnum(username);
+        }
+
+        function checkPhnum(num) {
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("user");
+            Model.query({
+                filter: {
+                    "fields": {
+                        "username": true
+                    },
+                    "where":{
+                        "username":num
+                    }
+                }
+            }, function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                } else {
+                    if(ret=='') {
+                        existUser = false;
+                        if (username == '') {
+                            tips.text("用户名不能为空！");
+                            return false;
+                        }else if (isPhnum() == false) {
+                            tips.text("手机号码输入有误！");
+                            return false;
+                        }else if (password == '') {
+                            tips.text("密码不能为空！");
+                            return false;
+                        }else if (checkPassword() == false) {
+                            tips.text("密码为8-16位 数字和字母的组合！");
+                            return false;
+                        }else if (verifyCode == '') {
+                            tips.text("请输入验证码");
+                            return false;
+                        }else {
+                            verify();
+                        }
+                    }else {
+                        existUser = true;
+                        if (username == '') {
+                            tips.text("用户名不能为空！");
+                            return false;
+                        }else if (isPhnum() == false) {
+                            tips.text("手机号码输入有误！");
+                            return false;
+                        }else if(existUser) {
+                            tips.text("该手机号已注册！");
+                            return false;
+                        }
+                    }
+                }
+            })
+        }
+
+        function isPhnum() {
+            // var myreg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+            var myreg = /^[1][3,4,5,7,8][0-9]{9}$/; //判断是否为手机号
+            if (!myreg.test($("#username").val())) {
+                return false;
+            }
+        }
+
+        function checkPassword() {
+            var pwdReg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/; //8到16位数字与字母组合
+            var value = $("#password").val();
+            if (!pwdReg.test(value)) {
+                return false;
+            }
+        }
+
+        function verify() {
+            var smsVerify = api.require('smsVerify');
+            smsVerify.verify({
+                phone:username,
+                country:"86",
+                code:verifyCode
+            },function(ret, err){
+                if(ret.status){
+                    // api.alert({msg: '验证成功'});
+                    register();
+                }else{
+                    // api.alert({msg: err.code+' '+err.msg});
+                    tips.text("验证码不正确哦~");
+                }
+            });
+        }
+
+        function register() {
+            var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+            var Model = client.Factory("user");
+            Model.save({
+                "username": username,
+                "password": password,
+                "nickname": "谋之用户#" + username.substr(7, 4),
+                "avatar": "http://806o19.com1.z0.glb.clouddn.com/apicloud/a3ee36e537f0309f2660ad08122f9972.png",
+                "background": "http://806o19.com1.z0.glb.clouddn.com/apicloud/36a4950929055d36ade457065a10808a.jpg",
+                "gender": "男",
+                "abstract": "无签名~",
+                "concern": 0,
+                "collect": 0,
+                "article": 0
+            },
+            function(ret, err) {
+                if (err) {
+                    tips.text("注册失败！检查一下网络问题哦~");
+                } else {
+                    var jsfun = "regSuccess()";
+                    api.execScript({
+                        name: 'zqx_log_header',
+                        frameName: 'zqx_log',
+                        script: jsfun
+                    });
+                    api.closeWin();
+                }
+            })
+        }
+
+        function getMessage() {
+            username = $("#username").val();
+            if (username == '') {
+                tips.text("手机号不能为空！");
+                return false;
+            }else if (isPhnum() == false) {
+                tips.text("手机号码输入有误！");
+                return false;
+            }else {
+                countDown();
+                interval = setInterval(countDown, 1000);
+                var smsVerify = api.require('smsVerify');
+                smsVerify.sms({
+                    phone:username,
+                    country:"86"
+                },function(ret, err){
+                    if(ret.status){
+                        if( ret.smart == true ){    // 安卓版特有功能 智能验证
+                            api.alert({msg: '智能验证成功：开发者可以在这里直接执行手机号验证成功之后的相关操作'});
+                        }else{
+                            // api.alert({msg: '短信发送成功'});
+                            sendMessage();
+                        }
+                    }else{
+                        api.alert({msg: err.code+' '+err.msg});
+                    }
+                });
+            }
+        }
+
+        function smsregister() {
+            var smsVerify = api.require('smsVerify');
+            smsVerify.register(function(ret, err){
+                if(ret.status){
+                    // api.alert({msg: '注册成功'});
+                }else{
+                    api.alert({msg: err.code+' 注册失败'});
+                }
+            });
+        }
+
+        function sendMessage() {
+            api.toast({
+                msg: '短信成功发送,注意查收~',
+                duration: 2000,
+                location: 'bottom'
+            });
+        }
+
+        function openitem() {
+            api.openWin({
+                name: 'zqx_regitem_header',
+                url: './zqx_regitem_header.html',
+                pageParam: {
+                    name: 'test'
+                }
+            });
+        }
+
+    </script>
+
+</html>

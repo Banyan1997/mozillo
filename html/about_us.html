@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css">
+    <link rel="stylesheet" type="text/css" href="../css/collapseStyle.css">
+    <style>
+        html {
+            background-color: #fff!important;
+        }
+    </style>
+</head>
+
+<body>
+      <div class="container">
+      	<div class="box box1" >
+      		<div class="name">
+      			<h4 >Ghost</h4>
+      			<h5 tapmode onclick="zqx();">Hello World!</h5>
+      		</div>
+          <p></p>
+      	</div>
+      	<div class="box box2">
+      		<div class="name">
+      			<h4 >Errorong</h4>
+      			<h5  tapmode onclick="zjr();">浪漫主义的error搬运工</h5>
+      		</div>
+          <p></p>
+      	</div>
+      	<div class="box box3">
+      		<div class="name">
+      			<h4 >L G</h4>
+      			<h5  tapmode onclick="wlg();">自认为帅气的油腻程序员</h5>
+      		</div>
+          <p></p>
+      	</div>
+      	<div class="box box4">
+      		<div class="name" >
+      			<h4>Maple</h4>
+      			<h5 tapmode onclick="lx();">但行好事<br>莫问前程</h5>
+      		</div>
+          <p></p>
+      	</div>
+        <div class="box box5">
+          <div class="name">
+            <h4 >闪电</h4>
+            <h5  tapmode onclick="zbj();">代码界的秋名山车神</h5>
+          </div>
+          <p></p>
+        </div>
+      </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="tdext/javascript" src="../script/swiper.js"></script>
+<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+<script type="text/javascript" src="../script/doT.js"></script>
+<script type="text/javascript" src="../script/aui-scroll.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script type="text/javascript">
+    var id;
+    var local_userInfo = $api.getStorage('local_userInfo');
+    apiready = function() {
+    };
+    function zqx() {
+      if('5b08e23016f537d902d3e829' == local_userInfo.id){
+          api.openWin({
+              name: 'lx_personal_page',
+              url: './lx_personal_page.html',
+              pageParam: {
+                  name: 'test'
+              }
+          });
+      }else {
+          api.openWin({
+              name: 'lx_otherpersonal_page',
+              url: './lx_otherpersonal_page.html',
+              pageParam: {
+                  id: '5b08e23016f537d902d3e829'
+              }
+          });
+      }
+    }
+    function zjr() {
+      if('5b0a2c72ea066bd32fd677b8' == local_userInfo.id){
+          api.openWin({
+              name: 'lx_personal_page',
+              url: './lx_personal_page.html',
+              pageParam: {
+                  name: 'test'
+              }
+          });
+      }else {
+          api.openWin({
+              name: 'lx_otherpersonal_page',
+              url: './lx_otherpersonal_page.html',
+              pageParam: {
+                  id: '5b0a2c72ea066bd32fd677b8'
+              }
+          });
+      }
+    }
+    function wlg() {
+      if('5b08d8bfec049fae10611bf7' == local_userInfo.id){
+          api.openWin({
+              name: 'lx_personal_page',
+              url: './lx_personal_page.html',
+              pageParam: {
+                  name: 'test'
+              }
+          });
+      }else {
+          api.openWin({
+              name: 'lx_otherpersonal_page',
+              url: './lx_otherpersonal_page.html',
+              pageParam: {
+                  id: '5b08d8bfec049fae10611bf7'
+              }
+          });
+      }
+    }
+    function lx() {
+      if('5b096c8c35ea307902b7c85e' == local_userInfo.id){
+          api.openWin({
+              name: 'lx_personal_page',
+              url: './lx_personal_page.html',
+              pageParam: {
+                  name: 'test'
+              }
+          });
+      }else {
+          api.openWin({
+              name: 'lx_otherpersonal_page',
+              url: './lx_otherpersonal_page.html',
+              pageParam: {
+                  id: '5b096c8c35ea307902b7c85e'
+              }
+          });
+      }
+    }
+    function zbj() {
+      if('5b1356f68e87ce3a4186c29d' == local_userInfo.id){
+          api.openWin({
+              name: 'lx_personal_page',
+              url: './lx_personal_page.html',
+              pageParam: {
+                  name: 'test'
+              }
+          });
+      }else {
+          api.openWin({
+              name: 'lx_otherpersonal_page',
+              url: './lx_otherpersonal_page.html',
+              pageParam: {
+                  id: '5b1356f68e87ce3a4186c29d'
+              }
+          });
+      }
+    }
+
+</script>
+
+</html>

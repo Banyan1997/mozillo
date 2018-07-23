@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/aui.css">
+    <style>
+        body {}
+
+        .aui-card-list-header {
+            color: #ff9933;
+        }
+
+        .icon {
+            float: left;
+            width: 1rem;
+            height: 1rem;
+            margin-right: 0.15rem;
+        }
+
+        .pic {
+            display: block;
+            height: 10rem;
+        }
+
+        .fansempty {
+            margin-top: 5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #ff9933;
+            line-height: 100%;
+            height: 100%;
+            background-color: #ffffff;
+        }
+
+        .deletepic {
+            width: 1rem;
+            height: 1rem;
+            float: right;
+            margin: 0.5rem 1rem 0 1rem;
+        }
+
+        .content {
+            height: 3rem;
+            line-height: 1rem;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+            padding-top: 0px;
+            padding-bottom: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="list" id="list">
+
+        <!-- <div class="aui-card-list">
+            <div class="aui-card-list-header" onclick="detail();">我们也可以做fate/stay night这样的游戏</div>
+            <div class="aui-card-list-content-padded" onclick="detail();">
+                <div>黄大年，男，广西南宁市人，汉族，1975年10月参加工作，中共党员， 著名地球物理学家、国家“千人计划”专家。曾任吉林大学新兴交叉学科学部学部长， 地球探测科学与技术学院教授、博士生导师。
+                </div>
+            </div>
+            <div class="aui-card-list-content-padded" onclick="detail();">
+                <img src="../image/000.jpg" />
+            </div>
+            <div class="aui-card-list-footer aui-border-t">
+                <div><img src="../image/ask_grey.png" class="icon"><span>666</span> </div>
+                <div><img src="../image/praise_grey.png" class="icon"><span>666</span> </div>
+                <div><img src="../image/collect_grey.png" class="icon">888</div>
+            </div>
+        </div> -->
+
+
+        <!-- <div class="aui-card-list">
+            <div class="aui-card-list-header" onclick="detail();">我们也可以做fate/stay night这样的游戏</div>
+            <div class="aui-card-list-content-padded" onclick="detail();">
+                <img src="../image/000.jpg" />
+            </div>
+            <div class="aui-card-list-footer aui-border-t">
+                <div><img src="../image/ask_grey.png" class="icon"><span>666</span> </div>
+                <div><img src="../image/praise_grey.png" class="icon" id="praiseImg" onclick="praise();"><span>666</span></div>
+                <div><img src="../image/collect_grey.png" class="icon">888</div>
+            </div>
+        </div> -->
+    </div>
+    <div class="fansempty" id="fansempty"> </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../script/APICloud-rest-SHA1.js"></script>
+<script type="text/javascript" src="../script/doT.js"></script>
+<script type="text/javascript" src="../script/aui-scroll.js"></script>
+<script type="text/javascript" src="../script/constant.js"></script>
+<script id="bulb_detail" type="text/x-dot-template">
+    {{~it:value:index}}
+
+    <div class="aui-card-list" id="article_{{= value.id }}">
+        <img src="../image/delete_orange.png" alt="" class="deletepic" myid="{{= value.id }}">
+        <div class="aui-card-list-header" onclick="detail('{{= value.id }}');">{{= value.title }} </div>
+        <div class="aui-card-list-content-padded content" onclick="detail('{{= value.id }}');">
+            {{= value.content }}
+        </div>
+        <div class="aui-card-list-content-padded" onclick="detail('{{= value.id }}');">
+            <img src="{{= value.pictureArray[0] }}" class="pic">
+        </div>
+        <div class="aui-card-list-footer aui-border-t">
+            <div><img src="../image/praise_grey.png" class="icon"><span>{{= value.praiseNum }} </span> </div>
+            <div><img src="../image/collect_grey.png" class="icon">{{= value.collectionNum }} </div>
+            <div><img src="../image/ask_grey.png" class="icon"><span>{{= value.commentNum }} </span> </div>
+        </div>
+    </div>
+
+
+    {{~}}
+</script>
+<script type="text/javascript">
+    var local_userId;
+    var skipNum = 0;
+    var limitNum = 5;
+    var tag = true;
+    var loading;
+    apiready = function() {
+
+        local_userId = $api.getStorage('local_userInfo').id;
+        query();
+
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#fff',
+            images: [
+                'widget://image/refresh/pic1.png',
+                'widget://image/refresh/pic2.png',
+                'widget://image/refresh/pic3.png',
+                'widget://image/refresh/pic4.png',
+                'widget://image/refresh/pic5.png',
+                'widget://image/refresh/pic6.png',
+                'widget://image/refresh/pic7.png',
+                'widget://image/refresh/pic8.png'
+            ],
+            tips: {
+                pull: '下拉刷新',
+                threshold: '松开立即刷新',
+                load: '正在刷新'
+            }
+        }, function() {
+            refreshQuery();
+        });
+
+        pullAdd();
+        //删除操作
+        $('#list').on('click', '.deletepic', function() {
+
+            var myid = $(this).attr('myid');
+            // alert(myid);
+            deletepic(myid);
+        });
+
+    };
+
+    function deletepic(id) {
+
+        var dialogBox = api.require('dialogBox');
+        dialogBox.alert({
+            texts: {
+                // title: '确认',
+                content: '您确定要删除这篇文章吗',
+                leftBtnTitle: '取消',
+                rightBtnTitle: '确认'
+            },
+            styles: {
+                bg: '#fff',
+                w: 300,
+                title: {
+                    marginT: 20,
+                    icon: 'widget://res/gou.png',
+                    iconSize: 40,
+                    titleSize: 14,
+                    titleColor: '#000'
+                },
+                content: {
+                    color: '#000',
+                    size: 14
+                },
+                left: {
+                    marginB: 7,
+                    marginL: 20,
+                    w: 130,
+                    h: 35,
+                    corner: 2,
+                    bg: '#ff9933',
+                    color: '#fff',
+                    size: 12
+                },
+                right: {
+                    marginB: 7,
+                    marginL: 10,
+                    w: 130,
+                    h: 35,
+                    corner: 2,
+                    bg: '#ff9933',
+                    color: '#fff',
+                    size: 12
+                }
+            }
+        }, function(ret) {
+            if (ret.eventType == 'left') {
+                dialogBox.close({
+                    dialogName: 'alert'
+                });
+            } else if (ret.eventType == 'right') {
+                // alert(id);
+                queryCollect(id);
+                deletearticle(id);
+
+                dialogBox.close({
+                    dialogName: 'alert'
+
+                });
+
+            }
+        });
+    }
+
+    //删除文章操作
+    function deletearticle(id) {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("article");
+        Model.delete({
+            "_id": id
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+            } else {
+                deleteHint();
+                $('#article_' + id).remove();
+            }
+        })
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("message");
+        Model.delete({
+            "articleId": id
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+            } else {
+                // deleteHint();
+                // $('#article_' + id).remove();
+            }
+        })
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("comment");
+        Model.delete({
+            "articleId": id
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+            } else {
+                // deleteHint();
+                // $('#article_' + id).remove();
+            }
+        })
+
+
+    }
+
+    function deleteHint() {
+        api.toast({
+            msg: '删除成功~',
+            duration: 1000,
+            location: 'bottom'
+        })
+    }
+
+    // 查询文章对应被收藏的数据
+    function queryCollect(id) {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("articleCollection");
+        Model.query({
+            filter: {
+                "where": {
+                    "articleId": id
+                }
+            }
+
+            // "include": "articleIdPointer"
+
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+            } else {
+                // alert(id);
+                // alert(JSON.stringify(ret));
+                for (var i = 0; i < ret.length; i++) {
+                    // alert(ret[i].id);
+                    deleteCollect(ret[i].id);
+                }
+            }
+        })
+    }
+
+    // 删除被收藏数据
+    function deleteCollect(id) {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("articleCollection");
+        Model.delete({
+            "_id": id
+        }, function(ret, err) {
+            if (err) {
+                //处理错误 err
+            } else {
+                // alert("收藏删除成功");
+            }
+        })
+    }
+
+    //上拉加载
+    function pullAdd() {
+        var scroll = new auiScroll({
+            listen: true, //是否监听滚动高度，开启后将实时返回滚动高度
+            distance: 20 //判断到达底部的距离，isToBottom为true
+        }, function(ret) {
+            //		   console.log(JSON.stringify(ret))
+            if (ret.isToBottom == true && tag) {
+                tag = false;
+                pullAddQuery();
+            }
+        });
+    }
+
+
+    function query() {
+        var UILoading = api.require('UILoading');
+        UILoading.flower({
+            center: {
+                x: api.winWidth / 2.0,
+                y: api.winHeight / 2.0
+            },
+            size: 45,
+            fixed: true
+        }, function(ret) {
+            //alert(JSON.stringify(ret));
+            loading = ret.id;
+            // alert(loading);
+
+        });
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("article");
+        Model.query({
+                filter: {
+                    "fields": {
+                        "id": true,
+                        "title": true,
+                        "content": true,
+                        "commentNum": true,
+                        "praiseNum": true,
+                        "pictureArray": true,
+                        "collectionNum": true
+
+                    },
+                    // "include": "authorIdPointer",
+                    "order": "createdAt DESC",
+                    "limit": limitNum,
+                    "where": {
+                        "authorId": local_userId
+                    }
+                }
+            },
+            function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                } else {
+                    //处理数据 ret
+                    // alert(ret[1].pictureArray);
+                    //alert(JSON.stringify(ret));
+
+                    if (ret[0] == null) {
+                        document.getElementById('fansempty').innerHTML = '暂时还没发布点子哦~';
+                        for (var i = 0; i <= loading; i++) {
+                            UILoading.closeFlower({
+                                id: i
+                            });
+                        }
+                    } else {
+                        $("#fansempty").remove();
+                        var bulb_detail = doT.template($('#bulb_detail').html());
+                        $('#list').html(bulb_detail(ret));
+                        for (var i = 0; i <= loading; i++) {
+                            UILoading.closeFlower({
+                                id: i
+                            });
+                        }
+                    }
+                    loading = 0;
+                    limitNum = limitNum + limitNum;
+                    tag = true;
+
+                }
+            })
+    }
+
+    function refreshQuery() {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("article");
+        Model.query({
+                filter: {
+                    "fields": {
+                        "id": true,
+                        "title": true,
+                        "content": true,
+                        "commentNum": true,
+                        "praiseNum": true,
+                        "pictureArray": true,
+                        "collectionNum": true
+
+                    },
+                    // "include": "authorIdPointer",
+                    "order": "createdAt DESC",
+                    "limit": limitNum,
+                    "where": {
+                        "authorId": local_userId
+                    }
+                }
+            },
+            function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                } else {
+                    //处理数据 ret
+                    var bulb_detail = doT.template($('#bulb_detail').html());
+                    $('#list').html(bulb_detail(ret));
+                    tag = true;
+                    api.refreshHeaderLoadDone()
+                }
+            })
+    }
+
+    function pullAddQuery() {
+        var client = new Resource(APP_INFO.app_id, APP_INFO.app_key);
+        var Model = client.Factory("article");
+        Model.query({
+                filter: {
+                    "fields": {
+                        "id": true,
+                        "title": true,
+                        "content": true,
+                        "commentNum": true,
+                        "praiseNum": true,
+                        "pictureArray": true,
+                        "collectionNum": true
+
+                    },
+                    // "include": "authorIdPointer",
+                    "order": "createdAt DESC",
+                    "limit": limitNum,
+                    "where": {
+                        "authorId": local_userId
+                    }
+                }
+            },
+            function(ret, err) {
+                if (err) {
+                    //处理错误 err
+                } else {
+                    //处理数据 ret
+                    var bulb_detail = doT.template($('#bulb_detail').html());
+                    $('#list').html(bulb_detail(ret));
+                    limitNum = limitNum + limitNum;
+                    tag = true;
+                }
+            })
+    }
+
+    function detail(id) {
+
+        api.openWin({
+            name: 'home_detail_personnal_header',
+            url: './home_detail_personnal_header.html',
+            pageParam: {
+                'id': id
+            }
+        });
+
+    };
+
+
+    function praise() {
+        var praiseImg = $api.byId('#praiseImg')[0].src;
+        //    alert(praiseImg);
+    }
+</script>
+
+</html>
